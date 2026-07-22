@@ -1,0 +1,61 @@
+{
+  "testUser": "qa_1784724356704",
+  "testEmail": "qa_1784724356704@qa.test",
+  "timestamp": "2026-07-22T12:46:52.586Z",
+  "totalIssues": 2,
+  "issues": [
+    {
+      "severity": "low",
+      "page": "Planner/Recipes",
+      "description": "Only 0/5 recipes visible"
+    },
+    {
+      "severity": "low",
+      "page": "Insights",
+      "description": "No chart visible on insights page"
+    }
+  ],
+  "consoleErrors": [],
+  "screenshots": [
+    "01-login.png",
+    "01-register.png",
+    "01b-register-filled.png",
+    "01c-after-register.png",
+    "02-onboarding-start.png",
+    "02-onboarding-step-0.png",
+    "02-register.png",
+    "02a-onboarding-step1.png",
+    "02b-after-register.png",
+    "02b-step1-filled.png",
+    "02c-after-step1.png",
+    "02d-step2-selected.png",
+    "02e-after-step2.png",
+    "02f-step3-selected.png",
+    "02g-after-step3.png",
+    "02h-start-tracking.png",
+    "03-dashboard.png",
+    "03b-notifications.png",
+    "04-dashboard.png",
+    "04-log.png",
+    "04b-food-picker.png",
+    "04c-search-egg.png",
+    "04d-after-add-meal.png",
+    "05-log-empty.png",
+    "05-planner.png",
+    "05b-add-meal-nav.png",
+    "05d-log-specific-date.png",
+    "06-planner.png",
+    "06-recipes.png",
+    "07-pricing.png",
+    "07-recipes.png",
+    "07b-annual.png",
+    "08-insights.png",
+    "08-pricing.png",
+    "09-insights.png",
+    "09-settings.png",
+    "10-settings.png",
+    "11-profile.png",
+    "12-checkout.png",
+    "error-unhandled.png"
+  ]
+}
