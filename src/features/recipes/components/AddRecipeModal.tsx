@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { nutritionService } from '@services/nutrition.service';
 import { mealPlansService } from '@services/meal-plans.service';
+import type { MealPlanDay, PlannedMeal } from 'types/meal-plan';
+import type { MealType } from 'types/nutrition';
 import type { Recipe } from 'types/recipe';
 
 interface AddRecipeModalProps {
@@ -13,13 +15,26 @@ interface AddRecipeModalProps {
   onError: (msg: string) => void;
 }
 
-const MEAL_TYPES = [
+const MEAL_TYPES: { value: MealType; label: string; icon: string }[] = [
   { value: 'breakfast', label: 'Breakfast', icon: 'wb_sunny' },
   { value: 'lunch', label: 'Lunch', icon: 'light_mode' },
   { value: 'dinner', label: 'Dinner', icon: 'bedtime' },
   { value: 'snack', label: 'Snack', icon: 'cookie' },
 ];
 
+function getDayName(date: string): string {
+  return new Date(date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+}
+
+function withUpdatedTotals(day: MealPlanDay): MealPlanDay {
+  return {
+    ...day,
+    totalCalories: day.meals.reduce((sum, meal) => sum + meal.calories, 0),
+    totalProtein: day.meals.reduce((sum, meal) => sum + meal.proteinGrams, 0),
+    totalCarbs: day.totalCarbs ?? 0,
+    totalFats: day.totalFats ?? 0,
+  };
+}
 function getWeekDays(): { label: string; value: string; isToday: boolean }[] {
   const days = [];
   const now = new Date();
@@ -55,7 +70,7 @@ export function AddRecipeModal({ recipe, mode, servings, onClose, onSuccess, onE
   const today = new Date().toISOString().split('T')[0];
 
   const [selectedDate, setSelectedDate] = useState(today);
-  const [selectedMealType, setSelectedMealType] = useState('breakfast');
+  const [selectedMealType, setSelectedMealType] = useState<MealType>('breakfast');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -66,7 +81,7 @@ export function AddRecipeModal({ recipe, mode, servings, onClose, onSuccess, onE
         const foods = await nutritionService.searchFoods(recipe.title);
         if (foods && foods.length > 0) {
           await nutritionService.addMeal(
-            selectedMealType as 'breakfast' | 'lunch' | 'dinner' | 'snack',
+            selectedMealType,
             foods[0].id,
             servings,
             selectedDate
@@ -87,26 +102,36 @@ export function AddRecipeModal({ recipe, mode, servings, onClose, onSuccess, onE
 
         // Find or create the day entry
         const dayIdx = days.findIndex((d) => d.date === selectedDate);
-        const newMealEntry = {
+        const newMealEntry: PlannedMeal = {
           id: Date.now(),
-          mealType: selectedMealType as 'breakfast' | 'lunch' | 'dinner' | 'snack',
+          mealType: selectedMealType,
           recipe: {
             id: recipe.id,
             title: recipe.title,
-            caloriesPerServing: recipe.caloriesPerServing,
-            proteinGrams: recipe.proteinGrams,
+            imageUrl: recipe.imageUrl,
             prepTime: recipe.prepTime,
+            calories: recipe.caloriesPerServing,
+            tags: recipe.tags,
           },
-          servings,
+          calories: Math.round(recipe.caloriesPerServing * servings),
+          proteinGrams: Math.round(recipe.proteinGrams * servings),
         };
 
         if (dayIdx >= 0) {
-          days[dayIdx] = {
+          days[dayIdx] = withUpdatedTotals({
             ...days[dayIdx],
             meals: [...(days[dayIdx].meals || []), newMealEntry],
-          };
+          });
         } else {
-          days.push({ date: selectedDate, meals: [newMealEntry] });
+          days.push(withUpdatedTotals({
+            date: selectedDate,
+            dayName: getDayName(selectedDate),
+            meals: [newMealEntry],
+            totalCalories: 0,
+            totalProtein: 0,
+            totalCarbs: 0,
+            totalFats: 0,
+          }));
         }
 
         await mealPlansService.saveMealPlan(weekStart, days);
@@ -221,3 +246,4 @@ export function AddRecipeModal({ recipe, mode, servings, onClose, onSuccess, onE
     </div>
   );
 }
+
