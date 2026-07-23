@@ -15,6 +15,7 @@ export function Navbar({ onMenuToggle, searchPlaceholder = 'Search meals or reci
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
@@ -74,6 +75,14 @@ export function Navbar({ onMenuToggle, searchPlaceholder = 'Search meals or reci
             className="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-primary outline-none placeholder:text-on-surface-variant"
             placeholder={searchPlaceholder}
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && searchQuery.trim()) {
+                navigate(`/recipes?search=${encodeURIComponent(searchQuery.trim())}`);
+                setSearchQuery('');
+              }
+            }}
           />
         </div>
       </div>
