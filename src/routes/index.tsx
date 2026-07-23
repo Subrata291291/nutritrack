@@ -9,6 +9,7 @@ import { DashboardPage } from '@features/dashboard';
 import { NutritionLogPage } from '@features/nutrition-log';
 import { MealPlannerPage } from '@features/meal-planner';
 import { RecipesListPage, RecipeDetailPage } from '@features/recipes';
+import { FoodListPage, FoodDetailPage } from '@features/food';
 import { PricingPage } from '@features/pricing';
 import { CheckoutPage } from '@features/checkout';
 import { InsightsPage } from '@features/insights';
@@ -38,6 +39,8 @@ export function AppRoutes() {
           <Route path="/planner" element={<MealPlannerPage />} />
           <Route path="/recipes" element={<RecipesListPage />} />
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+          <Route path="/food" element={<FoodListPage />} />
+          <Route path="/food/:id" element={<FoodDetailPage />} />
           <Route path="/insights" element={<InsightsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/profile" element={<ProfileMetricsPage />} />

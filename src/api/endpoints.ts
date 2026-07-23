@@ -52,4 +52,8 @@ export const endpoints = {
     list: `${WP}${NS}/notifications`,
     markRead: `${WP}${NS}/notifications/read`,
   },
+  foods: {
+    list: `${WP}${NS}/foods`,
+    detail: (id: number) => `${WP}${NS}/foods/${id}`,
+  },
 } as const;
