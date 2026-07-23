@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { cn } from '@utils/cn';
 import { LoadingSpinner } from '@components/shared/LoadingSpinner';
 import { EmptyState } from '@components/shared/EmptyState';
@@ -7,6 +7,8 @@ import { recipesService } from '@services/recipes.service';
 import type { Recipe } from 'types/recipe';
 
 export function RecipesListPage() {
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [categories, setCategories] = useState<{ id: number; name: string; slug: string; count: number }[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
@@ -21,8 +23,9 @@ export function RecipesListPage() {
     async function fetchRecipes() {
       try {
         if (!cancelled) setLoading(true);
-        const params: { page: number; category?: string } = { page: 1 };
+        const params: { page: number; category?: string; search?: string } = { page: 1 };
         if (activeCategory) params.category = activeCategory;
+        if (searchQuery) params.search = searchQuery;
         const data = await recipesService.getRecipes(params);
         if (!cancelled) setRecipes(data);
       } catch {
@@ -33,7 +36,7 @@ export function RecipesListPage() {
     }
     fetchRecipes();
     return () => { cancelled = true; };
-  }, [activeCategory]);
+  }, [activeCategory, searchQuery]);
 
   return (
     <div className="bg-background min-h-[calc(100vh-4rem)]">

@@ -3,7 +3,7 @@ import { endpoints } from '@api/endpoints';
 import type { Recipe } from 'types/recipe';
 
 class RecipesService {
-  async getRecipes(params?: { page?: number; per_page?: number; category?: string }): Promise<Recipe[]> {
+  async getRecipes(params?: { page?: number; per_page?: number; category?: string; search?: string }): Promise<Recipe[]> {
     const response = await apiClient.get(endpoints.recipes.list, { params });
     return response.data?.data ?? response.data;
   }
