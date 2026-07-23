@@ -11,6 +11,7 @@ export interface FoodItem {
   fatsGrams: number;
   fiberGrams?: number;
   icon?: string;
+  imageUrl?: string;
   category?: string;
 }
 

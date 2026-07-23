@@ -1,3 +1,4 @@
+import { toLocalDateString } from '@utils/format';
 import type { OnboardingMetrics, ActivityLevel, GoalType, TDEEInfo } from 'types/onboarding';
 
 const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
@@ -42,7 +43,7 @@ export function calculateTDEE(
     const weeksToGoal = Math.round(kgToLose / 0.5);
     const goalDate = new Date();
     goalDate.setDate(goalDate.getDate() + weeksToGoal * 7);
-    projectedGoalDate = goalDate.toISOString().split('T')[0];
+    projectedGoalDate = toLocalDateString(goalDate);
   }
 
   return {

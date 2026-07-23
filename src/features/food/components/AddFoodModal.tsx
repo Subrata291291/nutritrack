@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { nutritionService } from '@services/nutrition.service';
 import { mealPlansService } from '@services/meal-plans.service';
+import { toLocalDateString } from '@utils/format';
 import type { MealPlanDay, PlannedMeal } from 'types/meal-plan';
 import type { MealType, FoodItem } from 'types/nutrition';
 
@@ -43,8 +44,8 @@ function getWeekDays(): { label: string; value: string; isToday: boolean }[] {
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
-    const value = d.toISOString().split('T')[0];
-    const isToday = value === now.toISOString().split('T')[0];
+    const value = toLocalDateString(d);
+    const isToday = value === toLocalDateString(now);
     days.push({
       label: d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
       value,
@@ -59,13 +60,13 @@ function getWeekStart(): string {
   const day = now.getDay();
   const diff = now.getDate() - day + (day === 0 ? -6 : 1);
   now.setDate(diff);
-  return now.toISOString().split('T')[0];
+  return toLocalDateString(now);
 }
 
 export function AddFoodModal({ food, mode, onClose, onSuccess, onError }: AddFoodModalProps) {
   const navigate = useNavigate();
   const weekDays = getWeekDays();
-  const today = new Date().toISOString().split('T')[0];
+  const today = toLocalDateString(new Date());
 
   const [servings, setServings] = useState(1);
   const [selectedDate, setSelectedDate] = useState(today);

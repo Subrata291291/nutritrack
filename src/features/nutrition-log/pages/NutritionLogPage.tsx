@@ -11,6 +11,7 @@ import { WaterTracker } from '../components/WaterTracker';
 import { ExerciseWidget } from '../components/ExerciseWidget';
 import { FoodPickerModal } from '../components/FoodPickerModal';
 import { LoadingSpinner } from '@components/shared/LoadingSpinner';
+import { parseLocalDate, toLocalDateString } from '@utils/format';
 import type { DailyLog, MealEntry, FoodItem } from 'types/nutrition';
 
 const mealTypeConfig = [
@@ -24,7 +25,7 @@ const defaultTargets = { calories: 2400, protein: 160, carbs: 280, fats: 75 };
 
 export function NutritionLogPage() {
   const [searchParams] = useSearchParams();
-  const today = new Date().toISOString().split('T')[0];
+  const today = toLocalDateString(new Date());
   const initialDate = searchParams.get('date') || today;
   const [currentDate, setCurrentDate] = useState(initialDate);
   const [dailyLog, setDailyLog] = useState<DailyLog | null>(null);
@@ -64,15 +65,15 @@ export function NutritionLogPage() {
   }, []);
 
   const goToPrevDay = () => {
-    const prev = new Date(currentDate);
+    const prev = parseLocalDate(currentDate);
     prev.setDate(prev.getDate() - 1);
-    setCurrentDate(prev.toISOString().split('T')[0]);
+    setCurrentDate(toLocalDateString(prev));
   };
 
   const goToNextDay = () => {
-    const next = new Date(currentDate);
+    const next = parseLocalDate(currentDate);
     next.setDate(next.getDate() + 1);
-    setCurrentDate(next.toISOString().split('T')[0]);
+    setCurrentDate(toLocalDateString(next));
   };
 
   const handleOpenPicker = (mealType: string) => setPickerMealType(mealType);

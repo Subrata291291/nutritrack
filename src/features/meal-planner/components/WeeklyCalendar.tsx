@@ -1,3 +1,4 @@
+import { parseLocalDate, toLocalDateString } from '@utils/format';
 import type { MealPlanDay } from 'types/meal-plan';
 
 interface WeeklyCalendarProps {
@@ -27,13 +28,12 @@ const dayAccent: Record<string, { border: string; dot: string; bg: string }> = {
   Sun: { border: 'border-t-orange-400', dot: 'bg-orange-400', bg: 'bg-orange-400/5' },
 };
 
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+function fmtDate(dateStr: string): string {
+  return parseLocalDate(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function getTodayDateStr(): string {
-  return new Date().toISOString().split('T')[0];
+  return toLocalDateString(new Date());
 }
 
 function MealCard({ meal, dayDate, onDeleteMeal }: { meal: MealPlanDay['meals'][0]; dayDate: string; onDeleteMeal: (id: number, date: string) => void }) {
@@ -88,7 +88,7 @@ function DayColumn({ data, onAddMeal, onDeleteMeal }: { data: MealPlanDay; onAdd
           <p className="text-sm font-bold text-on-surface tracking-wider">{data.dayName}</p>
           {isToday && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-wider">Today</span>}
         </div>
-        <p className="text-xs text-on-surface-variant font-semibold">{formatDate(data.date)}</p>
+        <p className="text-xs text-on-surface-variant font-semibold">{fmtDate(data.date)}</p>
       </div>
 
       {/* Meals */}
@@ -120,11 +120,11 @@ function DayColumn({ data, onAddMeal, onDeleteMeal }: { data: MealPlanDay; onAdd
 
 export function WeeklyCalendar({ days, weekStart, onAddMeal, onDeleteMeal }: WeeklyCalendarProps) {
   const weekDays: MealPlanDay[] = dayLabels.map((label, i) => {
-    const date = new Date(weekStart);
+    const date = parseLocalDate(weekStart);
     date.setDate(date.getDate() + i);
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = toLocalDateString(date);
     const dayData = days.find((d) => {
-      const dDate = new Date(d.date);
+      const dDate = parseLocalDate(d.date);
       return dDate.toDateString() === date.toDateString();
     });
     return dayData || {

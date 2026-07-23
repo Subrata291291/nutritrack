@@ -68,8 +68,12 @@ export function FoodListPage() {
                 onClick={() => navigate(`/food/${food.id}`)}
                 className="group block w-full text-left bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden shadow-sm hover:shadow-md hover:border-primary/30 transition-all active:scale-[0.98]"
               >
-                <div className="aspect-[4/3] bg-gradient-to-br from-primary-container/30 to-primary-container/5 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-5xl text-primary/30 group-hover:text-primary/50 transition-colors" style={{ fontVariationSettings: "'FILL' 1" }}>{food.icon || 'restaurant'}</span>
+                <div className="aspect-[4/3] bg-surface-container-high flex items-center justify-center overflow-hidden">
+                  {food.imageUrl ? (
+                    <img src={food.imageUrl} alt={food.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  ) : (
+                    <span className="material-symbols-outlined text-5xl text-on-surface-variant/30" style={{ fontVariationSettings: "'FILL' 1" }}>{food.icon || 'restaurant'}</span>
+                  )}
                 </div>
                 <div className="p-4">
                   {food.category && (

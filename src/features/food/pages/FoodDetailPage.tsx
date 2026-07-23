@@ -64,8 +64,12 @@ export function FoodDetailPage() {
         </button>
 
         <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden">
-          <div className="bg-gradient-to-br from-primary-container/30 to-primary-container/5 h-48 flex items-center justify-center">
-            <span className="material-symbols-outlined text-7xl text-primary/30" style={{ fontVariationSettings: "'FILL' 1" }}>{food.icon || 'restaurant'}</span>
+          <div className="bg-surface-container-high h-48 flex items-center justify-center overflow-hidden">
+            {food.imageUrl ? (
+              <img src={food.imageUrl} alt={food.name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="material-symbols-outlined text-7xl text-on-surface-variant/30" style={{ fontVariationSettings: "'FILL' 1" }}>{food.icon || 'restaurant'}</span>
+            )}
           </div>
           <div className="p-6 sm:p-8 space-y-6">
             <div>

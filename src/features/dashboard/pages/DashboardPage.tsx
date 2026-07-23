@@ -4,6 +4,7 @@ import { nutritionService } from '@services/nutrition.service';
 import { insightsService } from '@services/insights.service';
 import { userService } from '@services/user.service';
 import { LoadingSpinner } from '@components/shared/LoadingSpinner';
+import { toLocalDateString } from '@utils/format';
 import { DailyOverview } from '../components/DailyOverview';
 import { MacroBreakdown } from '../components/MacroBreakdown';
 import { WeightTrendChart } from '../components/WeightTrendChart';
@@ -21,7 +22,7 @@ export function DashboardPage() {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = toLocalDateString(new Date());
 
   useEffect(() => {
     const fetchData = async () => {

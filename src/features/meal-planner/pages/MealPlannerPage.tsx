@@ -6,6 +6,7 @@ import { ShoppingListModal } from '../components/ShoppingListModal';
 import { mealPlansService } from '@services/meal-plans.service';
 import { nutritionService } from '@services/nutrition.service';
 import { LoadingSpinner } from '@components/shared/LoadingSpinner';
+import { parseLocalDate, toLocalDateString } from '@utils/format';
 import type { MealPlanDay, ShoppingList } from 'types/meal-plan';
 
 function getWeekStart(): string {
@@ -13,12 +14,12 @@ function getWeekStart(): string {
   const day = now.getDay();
   const diff = now.getDate() - day + (day === 0 ? -6 : 1);
   now.setDate(diff);
-  return now.toISOString().split('T')[0];
+  return toLocalDateString(now);
 }
 
 function formatWeekRange(weekStart: string): string {
-  const start = new Date(weekStart);
-  const end = new Date(weekStart);
+  const start = parseLocalDate(weekStart);
+  const end = parseLocalDate(weekStart);
   end.setDate(end.getDate() + 6);
   const opts: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
   return `${start.toLocaleDateString('en-US', opts)} – ${end.toLocaleDateString('en-US', opts)}`;
