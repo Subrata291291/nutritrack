@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -21,6 +22,8 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export function RegisterPage() {
   const navigate = useNavigate();
   const { register: registerUser, isLoading } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const { register, handleSubmit, formState: { errors }, setError } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
@@ -57,16 +60,40 @@ export function RegisterPage() {
         />
         <Input
           label="Password"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           placeholder="Create a strong password"
           error={errors.password?.message}
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-on-surface-variant/60 hover:text-on-surface-variant transition-colors p-1"
+              tabIndex={-1}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {showPassword ? 'visibility' : 'visibility_off'}
+              </span>
+            </button>
+          }
           {...register('password')}
         />
         <Input
           label="Confirm Password"
-          type="password"
+          type={showConfirm ? 'text' : 'password'}
           placeholder="Confirm your password"
           error={errors.confirmPassword?.message}
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="text-on-surface-variant/60 hover:text-on-surface-variant transition-colors p-1"
+              tabIndex={-1}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {showConfirm ? 'visibility' : 'visibility_off'}
+              </span>
+            </button>
+          }
           {...register('confirmPassword')}
         />
         {errors.root && (
