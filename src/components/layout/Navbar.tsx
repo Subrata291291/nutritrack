@@ -18,6 +18,7 @@ export function Navbar({ onMenuToggle, searchPlaceholder = 'Search meals or reci
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showGuides, setShowGuides] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -160,7 +161,7 @@ export function Navbar({ onMenuToggle, searchPlaceholder = 'Search meals or reci
               <div>
                 {[
                   { icon: 'help', text: 'FAQ', desc: 'Browse common questions', onClick: () => navigate('/faq') },
-                  { icon: 'description', text: 'Guides', desc: 'Step-by-step tutorials', onClick: () => navigate('/guides') },
+                  { icon: 'description', text: 'Guides', desc: 'Step-by-step tutorials', onClick: () => setShowGuides(true) },
                   { icon: 'forum', text: 'Contact Support', desc: 'Get help from our team', onClick: () => navigate('/support') },
                   { icon: 'feedback', text: 'Send Feedback', desc: 'Help us improve', onClick: () => navigate('/feedback') },
                 ].map(item => (
@@ -193,6 +194,104 @@ export function Navbar({ onMenuToggle, searchPlaceholder = 'Search meals or reci
           </div>
         </div>
       </div>
+      {/* Guides modal */}
+      {showGuides && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setShowGuides(false)} />
+          <div className="relative bg-surface-container-lowest rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-200">
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant/30 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>explore</span>
+                </div>
+                <div>
+                  <h2 className="text-headline-md font-bold text-on-surface">App Guide</h2>
+                  <p className="text-sm text-on-surface-variant/70">Learn how to use NutriTrack</p>
+                </div>
+              </div>
+              <button onClick={() => setShowGuides(false)} className="w-8 h-8 rounded-xl hover:bg-surface-container-low flex items-center justify-center transition-colors">
+                <span className="material-symbols-outlined text-[18px] text-on-surface-variant/50">close</span>
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5">
+              {[
+                {
+                  icon: 'dashboard',
+                  title: 'Dashboard',
+                  desc: 'Your daily health snapshot at a glance.',
+                  steps: ['View your calorie progress ring', 'Check macros breakdown', 'See your next scheduled meal', 'Track quick stats and insights'],
+                },
+                {
+                  icon: 'menu_book',
+                  title: 'Nutrition Log',
+                  desc: 'Log everything you eat throughout the day.',
+                  steps: ['Click "Add Meal" to log a food item', 'Search foods or browse recent items', 'Adjust portion sizes as needed', 'View your complete daily log'],
+                },
+                {
+                  icon: 'calendar_month',
+                  title: 'Meal Planner',
+                  desc: 'Plan your meals for the entire week.',
+                  steps: ['Use the weekly calendar to pick a day', 'Add meals from the recipe library', 'Drag to reorder your meals', 'Generate a shopping list automatically'],
+                },
+                {
+                  icon: 'auto_awesome',
+                  title: 'Recipes',
+                  desc: 'Discover healthy recipes tailored for you.',
+                  steps: ['Browse recipe categories', 'Use the search bar to find specific meals', 'Click a recipe to view full details', 'Add recipes to your daily log or planner'],
+                },
+                {
+                  icon: 'insights',
+                  title: 'Insights',
+                  desc: 'Track your progress and trends over time.',
+                  steps: ['View weight tracking charts', 'Check your nutritional balance score', 'Celebrate milestones as you progress', 'Get AI-powered smart insights'],
+                },
+                {
+                  icon: 'settings',
+                  title: 'Settings',
+                  desc: 'Personalize your experience.',
+                  steps: ['Update your profile and goals', 'Adjust daily calorie targets', 'Switch between light and dark themes', 'Manage subscription and account'],
+                },
+              ].map((section) => (
+                <div key={section.title} className="bg-surface-container-low/30 rounded-xl p-4 border border-outline-variant/20">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-primary text-[18px]">{section.icon}</span>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-on-surface">{section.title}</h3>
+                      <p className="text-xs text-on-surface-variant/70">{section.desc}</p>
+                    </div>
+                  </div>
+                  <ul className="space-y-1.5 ml-1">
+                    {section.steps.map((step, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-xs text-on-surface-variant">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary/40 mt-1.5 flex-shrink-0" />
+                        {step}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <div className="px-6 py-4 border-t border-outline-variant/30 flex-shrink-0 flex justify-end gap-3">
+              <button
+                onClick={() => setShowGuides(false)}
+                className="px-4 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low rounded-xl transition-colors"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => setShowGuides(false)}
+                className="px-4 py-2 text-sm font-semibold text-on-primary bg-primary hover:bg-primary/90 rounded-xl transition-colors"
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
