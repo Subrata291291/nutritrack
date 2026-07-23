@@ -228,7 +228,7 @@ export function SettingsPage() {
     <div className="bg-background min-h-screen pb-8">
       <div className="mx-auto px-2 pt-6 space-y-5">
         {loading && (
-          <div className="flex items-center justify-center py-20">
+          <div className="min-h-[calc(100vh-12rem)] flex items-center justify-center">
             <LoadingSpinner size="lg" text="Loading settings..." />
           </div>
         )}

@@ -75,7 +75,9 @@ export function RecipesListPage() {
         </div>
 
         {loading ? (
-          <LoadingSpinner size="lg" text="Loading recipes..." />
+          <div className="bg-background min-h-[calc(100vh-12rem)] flex items-center justify-center">
+            <LoadingSpinner size="lg" text="Loading recipes..." />
+          </div>
         ) : recipes.length === 0 ? (
           <EmptyState icon="restaurant" title="No recipes found" description="Try a different category or check back later." />
         ) : (

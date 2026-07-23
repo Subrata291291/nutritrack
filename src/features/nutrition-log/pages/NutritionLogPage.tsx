@@ -96,7 +96,11 @@ export function NutritionLogPage() {
   const getCaloriesByType = (type: string) => getMealsByType(type).reduce((sum, m) => sum + (m.foodItem?.calories || 0) * m.servings, 0);
 
   if (loading && !dailyLog) {
-    return <LoadingSpinner size="lg" text="Loading nutrition log..." />;
+    return (
+      <div className="bg-background min-h-[calc(100vh-4rem)] flex items-center justify-center">
+        <LoadingSpinner size="lg" text="Loading nutrition log..." />
+      </div>
+    );
   }
 
   return (

@@ -83,6 +83,14 @@ export function MealPlannerPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="bg-background min-h-[calc(100vh-4rem)] flex items-center justify-center">
+        <LoadingSpinner size="lg" text="Loading meal plan..." />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-background min-h-[calc(100vh-4rem)]">
       {/* Header */}
@@ -114,11 +122,7 @@ export function MealPlannerPage() {
 
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 lg:col-span-8">
-          {loading ? (
-            <LoadingSpinner size="lg" text="Loading meal plan..." />
-          ) : (
-            <WeeklyCalendar days={days} weekStart={weekStart} onAddMeal={(date) => navigate(`/log?date=${date}`)} onDeleteMeal={handleDeleteMeal} />
-          )}
+          <WeeklyCalendar days={days} weekStart={weekStart} onAddMeal={(date) => navigate(`/log?date=${date}`)} onDeleteMeal={handleDeleteMeal} />
         </div>
         <div className="col-span-12 lg:col-span-4">
           <RecipeLibrary />
