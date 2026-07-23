@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, forwardRef } from 'react';
+import { type InputHTMLAttributes, forwardRef, type ReactNode } from 'react';
 import { cn } from '@utils/cn';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -6,10 +6,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   hint?: string;
   suffix?: string;
+  rightElement?: ReactNode;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, hint, suffix, id, ...props }, ref) => {
+  ({ className, label, error, hint, suffix, rightElement, id, ...props }, ref) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
     return (
@@ -31,11 +32,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             )}
             {...props}
           />
-          {suffix && (
+          {rightElement ? (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              {rightElement}
+            </div>
+          ) : suffix ? (
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant">
               {suffix}
             </span>
-          )}
+          ) : null}
         </div>
         {error && <p className="text-xs text-error">{error}</p>}
         {hint && !error && <p className="text-xs text-on-surface-variant">{hint}</p>}

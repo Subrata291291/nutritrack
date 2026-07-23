@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,6 +17,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export function LoginPage() {
   const navigate = useNavigate();
   const { login, isLoading } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, formState: { errors }, setError } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
@@ -46,18 +48,30 @@ export function LoginPage() {
         />
         <Input
           label="Password"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           placeholder="Enter your password"
           error={errors.password?.message}
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-on-surface-variant/60 hover:text-on-surface-variant transition-colors p-1"
+              tabIndex={-1}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {showPassword ? 'visibility' : 'visibility_off'}
+              </span>
+            </button>
+          }
           {...register('password')}
         />
         {errors.root && (
           <p className="text-sm text-error bg-error-container p-3 rounded-lg">{errors.root.message}</p>
         )}
         <div className="flex justify-end">
-          <button type="button" className="text-sm font-semibold text-primary hover:underline">
+          <Link to="/forgot-password" className="text-sm font-semibold text-primary hover:underline">
             Forgot password?
-          </button>
+          </Link>
         </div>
         <Button type="submit" fullWidth loading={isLoading}>
           Sign In

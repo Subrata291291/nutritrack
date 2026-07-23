@@ -4,7 +4,7 @@ import { AuthShell } from '@layouts/AuthShell';
 import { MainLayout, ProtectedRoute } from '@components/layout';
 import { OnboardingProvider } from '@contexts/OnboardingProvider';
 import { OnboardingPage } from '@features/onboarding';
-import { LoginPage, RegisterPage } from '@features/auth';
+import { LoginPage, RegisterPage, ForgotPasswordPage } from '@features/auth';
 import { DashboardPage } from '@features/dashboard';
 import { NutritionLogPage } from '@features/nutrition-log';
 import { MealPlannerPage } from '@features/meal-planner';
@@ -24,6 +24,7 @@ export function AppRoutes() {
       <Route element={<AuthShell />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       </Route>
 
       <Route element={<ProtectedRoute requireOnboarding />}>
