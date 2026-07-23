@@ -59,6 +59,7 @@ export function Navbar({ onMenuToggle, searchPlaceholder = 'Search meals or reci
   }, []);
 
   return (
+    <>
     <header className="sticky top-0 z-20 h-16 bg-surface-container-lowest/90 backdrop-blur-lg border-b border-outline-variant flex items-center justify-between px-4 lg:px-6">
       <div className="flex items-center gap-3 flex-1">
         {onMenuToggle && (
@@ -194,11 +195,12 @@ export function Navbar({ onMenuToggle, searchPlaceholder = 'Search meals or reci
           </div>
         </div>
       </div>
+      </header>
       {/* Guides modal */}
       {showGuides && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setShowGuides(false)} />
-          <div className="relative bg-surface-container-lowest rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-200">
+          <div className="relative bg-surface-container-lowest rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant/30 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -292,6 +294,6 @@ export function Navbar({ onMenuToggle, searchPlaceholder = 'Search meals or reci
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
