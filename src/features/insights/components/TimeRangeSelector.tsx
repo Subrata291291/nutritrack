@@ -1,5 +1,3 @@
-import { cn } from '@utils/cn';
-
 interface TimeRangeSelectorProps {
   selected: number;
   onChange: (days: number) => void;
@@ -13,17 +11,14 @@ const ranges = [
 
 export function TimeRangeSelector({ selected, onChange }: TimeRangeSelectorProps) {
   return (
-    <div className="flex gap-xs bg-surface-container-high p-1 rounded-xl w-fit">
+    <div className="flex gap-1 bg-surface-container-high p-1 rounded-xl">
       {ranges.map((range) => (
-        <button
-          key={range.value}
-          onClick={() => onChange(range.value)}
-          className={cn(
-            'px-md py-sm rounded-lg font-label-sm text-label-sm transition-all',
+        <button key={range.value} onClick={() => onChange(range.value)}
+          className={`px-4 py-2 rounded-lg text-label-sm font-semibold transition-all ${
             selected === range.value
-              ? 'text-on-primary-container bg-primary-container'
-              : 'text-secondary hover:bg-surface-container'
-          )}
+              ? 'bg-surface-container-lowest text-primary shadow-sm border border-outline-variant/50'
+              : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+          }`}
         >
           {range.label}
         </button>

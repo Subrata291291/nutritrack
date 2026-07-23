@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { PersonalMetrics } from '../components/PersonalMetrics';
 import { ActivityLevelSelector } from '../components/ActivityLevelSelector';
 import { HealthGoals } from '../components/HealthGoals';
@@ -9,6 +10,7 @@ import type { UserProfile } from 'types/settings';
 import type { ActivityLevel } from 'types/onboarding';
 
 export function ProfileMetricsPage() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -71,7 +73,7 @@ export function ProfileMetricsPage() {
       <div className="sticky top-0 z-10 bg-background border-b border-outline-variant/30 px-4">
         <div className="flex items-center justify-between h-16 max-w-2xl mx-auto">
           <div className="flex items-center gap-3">
-            <button className="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+            <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center hover:bg-surface-container-highest transition-colors">
               <span className="material-symbols-outlined text-primary text-xl">arrow_back</span>
             </button>
             <span className="text-lg font-semibold text-on-surface">Health Metrics</span>

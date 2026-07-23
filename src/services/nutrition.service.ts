@@ -8,10 +8,11 @@ class NutritionService {
     return response.data?.data ?? response.data;
   }
 
-  async addMeal(mealType: MealType, foodItemId: number, servings: number, date: string): Promise<MealEntry> {
+  async addMeal(mealType: MealType, foodItemId: number, servings: number, date: string, recipeId?: number): Promise<MealEntry> {
     const response = await apiClient.post(endpoints.nutrition.log, {
       mealType,
       foodItemId,
+      recipeId,
       servings,
       date,
     });

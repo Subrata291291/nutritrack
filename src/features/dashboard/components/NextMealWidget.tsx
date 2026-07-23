@@ -11,9 +11,9 @@ export function NextMealWidget({ meals = [] }: NextMealWidgetProps) {
 
   if (!nextMeal) {
     return (
-      <section className="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-between col-span-12 lg:col-span-5">
+      <section className="bg-surface-container-lowest rounded-xl p-4 sm:p-6 shadow-[0px_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-between col-span-12 lg:col-span-5">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-[24px] font-semibold">Next Meal</h3>
+          <h3 className="text-xl sm:text-[24px] font-semibold">Next Meal</h3>
         </div>
         <div className="flex flex-col items-center justify-center py-8 text-on-surface-variant">
           <span className="material-symbols-outlined text-4xl mb-2">restaurant</span>
@@ -43,26 +43,26 @@ export function NextMealWidget({ meals = [] }: NextMealWidgetProps) {
   }
 
   return (
-    <section className="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-between col-span-12 lg:col-span-5">
+    <section className="bg-surface-container-lowest rounded-xl p-4 sm:p-6 shadow-[0px_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-between col-span-12 lg:col-span-5">
       <div>
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-[24px] font-semibold">Next Meal</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
+          <h3 className="text-xl sm:text-[24px] font-semibold">Next Meal</h3>
           <span className="flex items-center gap-1 text-sm font-semibold tracking-wider text-primary">
             <span className="material-symbols-outlined text-sm">schedule</span>
             {time}
           </span>
         </div>
-        <div className="flex gap-6 items-center bg-surface-container-low p-4 rounded-xl border border-outline-variant mb-6 group hover:bg-surface-container-lowest transition-all duration-300">
-          <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-surface-container-highest flex items-center justify-center">
-            <span className="material-symbols-outlined text-4xl text-primary">restaurant</span>
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center bg-surface-container-low p-4 rounded-xl border border-outline-variant mb-6 group hover:bg-surface-container-lowest transition-all duration-300">
+          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-surface-container-highest flex items-center justify-center">
+            <span className="material-symbols-outlined text-2xl sm:text-4xl text-primary">restaurant</span>
           </div>
-          <div className="flex-grow">
+          <div className="flex-grow min-w-0 w-full sm:w-auto">
             <div className="flex items-center gap-1 mb-1">
               <span className="bg-primary/20 text-[#00422b] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
                 {nextMeal.mealType}
               </span>
             </div>
-            <h4 className="text-[24px] font-semibold text-lg leading-tight mb-1">{nextMeal.foodItem?.name || 'Unknown Food'}</h4>
+            <h4 className="text-lg sm:text-[24px] font-semibold leading-tight mb-1 truncate">{nextMeal.foodItem?.name || 'Unknown Food'}</h4>
             <div className="flex gap-4 text-xs text-on-surface-variant">
               <span><strong className="text-on-surface">{Math.round((nextMeal.foodItem?.calories || 0) * nextMeal.servings)}</strong> kcal</span>
               <span><strong className="text-on-surface">{Math.round((nextMeal.foodItem?.proteinGrams || 0) * nextMeal.servings)}g</strong> protein</span>

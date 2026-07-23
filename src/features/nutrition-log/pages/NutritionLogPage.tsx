@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { nutritionService } from '@services/nutrition.service';
+import { getRecentRecipes } from '@services/recent-recipes.service';
+import type { RecentRecipeItem } from '@services/recent-recipes.service';
 import { DateNavigator } from '../components/DateNavigator';
-import { DailySummaryBar } from '../components/DailySummaryBar';
-import { MealSection } from '../components/MealSection';
+import { DailyProgressCard } from '../components/DailyProgressCard';
+import { TimelineMealCard } from '../components/TimelineMealCard';
 import { RecentFoods } from '../components/RecentFoods';
 import { WaterTracker } from '../components/WaterTracker';
 import { ExerciseWidget } from '../components/ExerciseWidget';
@@ -12,10 +14,10 @@ import { LoadingSpinner } from '@components/shared/LoadingSpinner';
 import type { DailyLog, MealEntry, FoodItem } from 'types/nutrition';
 
 const mealTypeConfig = [
-  { type: 'breakfast' as const, icon: 'light_mode', title: 'Breakfast', emptyIcon: 'light_mode', emptyMessage: 'Nothing logged for breakfast yet.', ctaLabel: 'Log Breakfast' },
-  { type: 'lunch' as const, icon: 'sunny', title: 'Lunch', emptyIcon: 'sunny', emptyMessage: 'Nothing logged for lunch yet.', ctaLabel: 'Log Lunch' },
-  { type: 'dinner' as const, icon: 'nights_stay', title: 'Dinner', emptyIcon: 'nights_stay', emptyMessage: 'Nothing logged for dinner yet.', ctaLabel: 'Log Dinner' },
-  { type: 'snack' as const, icon: 'icecream', title: 'Snacks', emptyIcon: 'icecream', emptyMessage: 'Nothing logged for snacks yet.', ctaLabel: 'Log Snack' },
+  { type: 'breakfast' as const, icon: 'wb_sunny', title: 'Breakfast', emptyIcon: 'wb_sunny', emptyMessage: 'Nothing logged for breakfast yet.', ctaLabel: 'Log Breakfast' },
+  { type: 'lunch' as const, icon: 'lunch_dining', title: 'Lunch', emptyIcon: 'lunch_dining', emptyMessage: 'Nothing logged for lunch yet.', ctaLabel: 'Log Lunch' },
+  { type: 'dinner' as const, icon: 'dinner_dining', title: 'Dinner', emptyIcon: 'dinner_dining', emptyMessage: 'Nothing logged for dinner yet.', ctaLabel: 'Log Dinner' },
+  { type: 'snack' as const, icon: 'cookie', title: 'Snacks', emptyIcon: 'cookie', emptyMessage: 'Nothing logged for snacks yet.', ctaLabel: 'Log Snack' },
 ];
 
 const defaultTargets = { calories: 2400, protein: 160, carbs: 280, fats: 75 };
@@ -27,6 +29,7 @@ export function NutritionLogPage() {
   const [currentDate, setCurrentDate] = useState(initialDate);
   const [dailyLog, setDailyLog] = useState<DailyLog | null>(null);
   const [recentFoods, setRecentFoods] = useState<FoodItem[]>([]);
+  const [recentRecipes, setRecentRecipes] = useState<RecentRecipeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [pickerMealType, setPickerMealType] = useState<string | null>(null);
 
@@ -57,6 +60,7 @@ export function NutritionLogPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchRecentFoods();
+    setRecentRecipes(getRecentRecipes());
   }, []);
 
   const goToPrevDay = () => {
@@ -96,9 +100,9 @@ export function NutritionLogPage() {
   }
 
   return (
-    <div className="flex flex-col gap-lg">
+    <div className="flex flex-col gap-xl">
       <DateNavigator date={new Date(currentDate)} onPrev={goToPrevDay} onNext={goToNextDay} />
-      <DailySummaryBar
+      <DailyProgressCard
         totals={{
           calories: dailyLog?.totalCalories || 0,
           protein: dailyLog?.totalProtein || 0,
@@ -107,17 +111,19 @@ export function NutritionLogPage() {
         }}
         targets={defaultTargets}
       />
-      <div className="grid grid-cols-12 gap-lg items-start">
-        <div className="col-span-8 space-y-md">
+      <div className="grid grid-cols-12 gap-xl items-start">
+        <div className="col-span-12 lg:col-span-8">
           {mealTypeConfig.map((config) => {
             const meals = getMealsByType(config.type);
             const calories = getCaloriesByType(config.type);
             return (
-              <MealSection
+              <TimelineMealCard
                 key={config.type}
+                type={config.type}
                 icon={config.icon}
                 title={config.title}
                 calories={calories}
+                targetCalories={defaultTargets.calories}
                 items={meals}
                 empty={meals.length === 0}
                 emptyIcon={config.emptyIcon}
@@ -129,8 +135,8 @@ export function NutritionLogPage() {
             );
           })}
         </div>
-        <div className="col-span-4 space-y-lg">
-          <RecentFoods items={recentFoods} onAddFood={(foodItemId) => handleAddMeal('snack', foodItemId, 1)} />
+        <div className="col-span-12 lg:col-span-4 space-y-lg">
+          <RecentFoods items={recentFoods} recentRecipes={recentRecipes} onAddFood={(foodItemId) => handleAddMeal('snack', foodItemId, 1)} />
           <FoodPickerModal
             open={pickerMealType !== null}
             mealType={pickerMealType || ''}

@@ -77,23 +77,16 @@ export function AddRecipeModal({ recipe, mode, servings, onClose, onSuccess, onE
     setSubmitting(true);
     try {
       if (mode === 'log') {
-        // Search for food item by recipe title and add to log
-        const foods = await nutritionService.searchFoods(recipe.title);
-        if (foods && foods.length > 0) {
-          await nutritionService.addMeal(
-            selectedMealType,
-            foods[0].id,
-            servings,
-            selectedDate
-          );
-          onSuccess(`"${recipe.title}" added to your ${selectedMealType} on ${new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}!`);
-          onClose();
-          if (selectedDate === today) navigate('/log');
-        } else {
-          onError('No matching food item found. Please add it manually in the Nutrition Log.');
-          onClose();
-          navigate('/log');
-        }
+        await nutritionService.addMeal(
+          selectedMealType,
+          0,
+          servings,
+          selectedDate,
+          recipe.id
+        );
+        onSuccess(`"${recipe.title}" added to your ${selectedMealType} on ${new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}!`);
+        onClose();
+        if (selectedDate === today) navigate('/log');
       } else {
         // Add to meal plan
         const weekStart = getWeekStart();

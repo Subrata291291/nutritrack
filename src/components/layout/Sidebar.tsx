@@ -1,6 +1,7 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { cn } from '@utils/cn';
 import { defaultNavItems, type NavItem } from '@config/navigation';
+import { authService } from '@services/auth.service';
 
 interface SidebarProps {
   items?: NavItem[];
@@ -9,11 +10,16 @@ interface SidebarProps {
 }
 
 export function Sidebar({ items = defaultNavItems, onNavClick, bottom }: SidebarProps) {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    authService.logout();
+    navigate('/login');
+  };
   return (
-    <aside className="h-full w-64 flex flex-col py-6">
-      <div className="px-6 mb-8">
-        <h1 className="text-[24px] font-semibold text-primary">NutriTrack</h1>
-        <p className="text-sm text-on-surface-variant opacity-70">Health Dashboard</p>
+    <aside className="h-full w-64 flex flex-col py-4">
+      <div className="px-6 mb-6">
+        <h1 className="text-[22px] font-bold text-primary tracking-tight">NutriTrack</h1>
+        <p className="text-xs text-on-surface-variant/60 mt-0.5">Health Dashboard</p>
       </div>
 
       <nav className="flex-grow">
@@ -43,9 +49,12 @@ export function Sidebar({ items = defaultNavItems, onNavClick, bottom }: Sidebar
 
       {bottom || (
         <div className="px-6 mt-auto">
-          <button className="w-full py-4 bg-primary-container text-on-primary text-sm font-semibold tracking-wider rounded-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-1">
-            <span className="material-symbols-outlined">add</span>
-            Log Meal
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-error/10 text-error hover:bg-error/20 transition-all group">
+            <span className="material-symbols-outlined text-[20px]">logout</span>
+            <span className="text-sm font-medium tracking-wide">Sign Out</span>
+            <span className="ml-auto">
+              <span className="material-symbols-outlined text-[16px]">logout</span>
+            </span>
           </button>
         </div>
       )}

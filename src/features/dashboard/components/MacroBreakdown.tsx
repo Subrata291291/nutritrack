@@ -40,8 +40,8 @@ export function MacroBreakdown({ dailyLog }: MacroBreakdownProps) {
   ];
 
   return (
-    <section className="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col">
-      <h3 className="text-[24px] font-semibold mb-6">Macro Breakdown</h3>
+    <section className="bg-surface-container-lowest rounded-xl p-4 sm:p-6 shadow-[0px_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col">
+      <h3 className="text-xl sm:text-[24px] font-semibold mb-6">Macro Breakdown</h3>
       <div className="space-y-6 flex-grow flex flex-col justify-center">
         {macrosData.map((macro) => (
           <MacroBar key={macro.label} label={macro.label} percent={macro.percent} barColor={macro.barColor} />

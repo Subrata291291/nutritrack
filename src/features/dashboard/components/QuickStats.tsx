@@ -9,13 +9,13 @@ function InsightCard({ icon, iconBg, iconColor, label, value, subtext, subtextCo
   icon: string; iconBg: string; iconColor: string; label: string; value: string; subtext: string; subtextColor: string;
 }) {
   return (
-    <div className="col-span-12 md:col-span-4 bg-surface-container-low rounded-xl p-6 flex items-center gap-6 border border-outline-variant">
-      <div className={`w-12 h-12 rounded-full ${iconBg} flex items-center justify-center ${iconColor}`}>
+    <div className="col-span-12 md:col-span-4 bg-surface-container-low rounded-xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6 border border-outline-variant">
+      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${iconBg} flex items-center justify-center flex-shrink-0 ${iconColor}`}>
         <span className="material-symbols-outlined">{icon}</span>
       </div>
-      <div>
+      <div className="min-w-0">
         <p className="text-xs text-on-surface-variant uppercase font-bold tracking-widest">{label}</p>
-        <p className="text-[24px] font-bold">{value}</p>
+        <p className="text-xl sm:text-[24px] font-bold">{value}</p>
         <p className={`text-xs ${subtextColor}`}>{subtext}</p>
       </div>
     </div>

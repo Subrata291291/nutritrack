@@ -61,7 +61,7 @@ export function DashboardPage() {
   return (
     <div className="bg-background min-h-[calc(100vh-4rem)]">
       <section className="mb-8">
-        <h2 className="text-[32px] font-bold text-on-surface mb-1">Welcome back, {displayName}!</h2>
+        <h2 className="text-2xl md:text-[32px] font-bold text-on-surface mb-1">Welcome back, {displayName}!</h2>
         {dailyLog && (
           <p className="text-base text-on-surface-variant">
             {remainingCalories > 0

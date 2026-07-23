@@ -99,7 +99,7 @@ export function PricingPage() {
               annual ? 'bg-primary/20 scale-110' : 'bg-surface-container-high scale-100'
             )} />
 
-            <div className="relative flex items-center gap-3 bg-gradient-to-b from-surface-container-high to-surface-container rounded-2xl p-2 shadow-lg">
+            <div className="relative flex items-center gap-2 sm:gap-3 bg-gradient-to-b from-surface-container-high to-surface-container rounded-2xl p-2 shadow-lg">
               {/* decorative accent line */}
               <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 

@@ -55,11 +55,16 @@ export function InsightsPage() {
   return (
     <div className="bg-background min-h-[calc(100vh-4rem)]">
       <div className="p-margin-mobile md:p-margin-desktop space-y-xl max-w-7xl mx-auto w-full">
-        {/* Heading always visible — not inside loading gate */}
+        {/* Heading */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-md">
-          <div>
-            <h2 className="font-headline-lg text-headline-lg text-on-surface">Health Insights</h2>
-            <p className="font-body-md text-body-md text-secondary">A comprehensive view of your physiological and nutritional progress.</p>
+          <div className="flex items-start sm:items-center gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center shadow-sm flex-shrink-0">
+              <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>insights</span>
+            </div>
+            <div>
+              <h2 className="text-headline-sm sm:text-headline-lg font-bold text-on-surface">Health Insights</h2>
+              <p className="text-body-sm sm:text-body-md text-on-surface-variant">A comprehensive view of your physiological and nutritional progress.</p>
+            </div>
           </div>
           <TimeRangeSelector selected={timeRange} onChange={setTimeRange} />
         </div>

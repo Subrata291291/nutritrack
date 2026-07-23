@@ -1,13 +1,13 @@
 {
-  "testUser": "qa_1784724356704",
-  "testEmail": "qa_1784724356704@qa.test",
-  "timestamp": "2026-07-22T12:46:52.586Z",
+  "testUser": "qa_1784791513477",
+  "testEmail": "qa_1784791513477@qa.test",
+  "timestamp": "2026-07-23T07:26:05.919Z",
   "totalIssues": 2,
   "issues": [
     {
       "severity": "low",
-      "page": "Planner/Recipes",
-      "description": "Only 0/5 recipes visible"
+      "page": "Planner",
+      "description": "Add Meal button not visible"
     },
     {
       "severity": "low",

@@ -9,6 +9,7 @@ import { QuickActions } from '../components/QuickActions';
 import { IngredientsList } from '../components/IngredientsList';
 import { PreparationSteps } from '../components/PreparationSteps';
 import { recipesService } from '@services/recipes.service';
+import { addRecentRecipe } from '@services/recent-recipes.service';
 import type { Recipe } from 'types/recipe';
 
 export function RecipeDetailPage() {
@@ -24,7 +25,10 @@ export function RecipeDetailPage() {
       try {
         if (!cancelled) { setLoading(true); setError(false); }
         const data = await recipesService.getRecipeDetail(Number(id));
-        if (!cancelled) setRecipe(data);
+        if (!cancelled) {
+          setRecipe(data);
+          addRecentRecipe({ id: data.id, title: data.title, caloriesPerServing: data.caloriesPerServing, imageUrl: data.imageUrl });
+        }
       } catch {
         if (!cancelled) setError(true);
       } finally {
@@ -53,7 +57,7 @@ export function RecipeDetailPage() {
 
   return (
     <div className="bg-background min-h-[calc(100vh-4rem)]">
-      <div className="relative h-[400px] overflow-hidden">
+      <div className="relative h-[250px] sm:h-[300px] md:h-[400px] overflow-hidden">
         {recipe.imageUrl ? (
           <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-full object-cover" />
         ) : (
