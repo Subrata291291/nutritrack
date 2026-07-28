@@ -90,6 +90,8 @@ export function NutritionLogPage() {
   const handleDeleteMeal = async (entryId: number) => {
     try {
       await nutritionService.deleteMealEntry(entryId);
+      const log = await nutritionService.getDailyLog(currentDate);
+      setDailyLog(log);
     } catch { /* ignore */ }
   };
 
@@ -146,7 +148,7 @@ export function NutritionLogPage() {
             open={pickerMealType !== null}
             mealType={pickerMealType || ''}
             recentFoods={recentFoods}
-            onSelect={(foodItemId) => handleAddMeal(pickerMealType || 'snack', foodItemId, 1)}
+            onSelect={(foodItemId, servings) => handleAddMeal(pickerMealType || 'snack', foodItemId, servings)}
             onClose={() => setPickerMealType(null)}
           />
           <WaterTracker 

@@ -1,5 +1,7 @@
 import { toLocalDateString } from '@utils/format';
 import type { OnboardingMetrics, ActivityLevel, GoalType, TDEEInfo } from 'types/onboarding';
+import type { UserProfile } from 'types/settings';
+import type { NutritionTargets } from 'types/nutrition';
 
 const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
   sedentary: 1.2,
@@ -21,6 +23,23 @@ export function calculateBMR(metrics: OnboardingMetrics): number {
     return 447.593 + 9.247 * weightKg + 3.098 * heightCm - 4.33 * age;
   }
   return 88.362 + 13.397 * weightKg + 4.799 * heightCm - 5.677 * age;
+}
+
+export function getNutritionTargets(profile: UserProfile): NutritionTargets {
+  const metrics: OnboardingMetrics = {
+    age: profile.age,
+    gender: profile.gender,
+    heightCm: profile.heightCm,
+    weightKg: profile.weightKg,
+  };
+  const tdee = calculateTDEE(metrics, profile.activityLevel, profile.goal, profile.targetWeightKg);
+  return {
+    calories: tdee.targetCalories,
+    proteinGrams: tdee.proteinGrams,
+    carbsGrams: tdee.carbsGrams,
+    fatsGrams: tdee.fatsGrams,
+    waterMl: 2500,
+  };
 }
 
 export function calculateTDEE(

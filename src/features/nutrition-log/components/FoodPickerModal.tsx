@@ -6,7 +6,7 @@ interface FoodPickerModalProps {
   open: boolean;
   mealType: string;
   recentFoods: FoodItem[];
-  onSelect: (foodItemId: number) => void;
+  onSelect: (foodItemId: number, servings: number) => void;
   onClose: () => void;
 }
 
@@ -14,6 +14,7 @@ export function FoodPickerModal({ open, mealType, recentFoods, onSelect, onClose
   const [search, setSearch] = useState('');
   const [results, setResults] = useState<FoodItem[]>([]);
   const [searching, setSearching] = useState(false);
+  const [servings, setServings] = useState(1);
   const inputRef = useRef<HTMLInputElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const timerRef = useRef<any>(null);
@@ -23,6 +24,7 @@ export function FoodPickerModal({ open, mealType, recentFoods, onSelect, onClose
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearch('');
       setResults([]);
+      setServings(1);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [open]);
@@ -90,6 +92,25 @@ export function FoodPickerModal({ open, mealType, recentFoods, onSelect, onClose
           </div>
         </div>
 
+        <div className="flex items-center justify-between px-4 pb-3">
+          <span className="text-label-sm text-on-surface-variant font-medium">Servings</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setServings(s => Math.max(0.5, s - 0.5))}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container hover:bg-surface-container-highest transition-colors text-on-surface-variant"
+            >
+              <span className="material-symbols-outlined text-[18px]">remove</span>
+            </button>
+            <span className="w-10 text-center text-sm font-semibold text-on-surface">{servings}</span>
+            <button
+              onClick={() => setServings(s => Math.min(10, s + 0.5))}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container hover:bg-surface-container-highest transition-colors text-on-surface-variant"
+            >
+              <span className="material-symbols-outlined text-[18px]">add</span>
+            </button>
+          </div>
+        </div>
+
         <div className="max-h-72 overflow-y-auto px-4 pb-4 space-y-1">
           {searching ? (
             <div className="flex items-center justify-center gap-2 py-8 text-sm text-on-surface-variant">
@@ -104,7 +125,7 @@ export function FoodPickerModal({ open, mealType, recentFoods, onSelect, onClose
             displayItems.map(food => (
               <button
                 key={food.id}
-                onClick={() => { onSelect(food.id); onClose(); }}
+                onClick={() => { onSelect(food.id, servings); onClose(); }}
                 className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-surface-container transition-colors text-left"
               >
                 <div className="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">

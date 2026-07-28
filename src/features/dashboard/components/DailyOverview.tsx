@@ -1,14 +1,9 @@
-import type { DailyLog } from 'types/nutrition';
+import type { DailyLog, NutritionTargets } from 'types/nutrition';
 
 interface DailyOverviewProps {
   dailyLog?: DailyLog | null;
+  targets?: NutritionTargets | null;
 }
-
-const calGoal = 2200;
-const proteinGoal = 160;
-const carbsGoal = 280;
-const fatsGoal = 75;
-const waterGoal = 2500;
 
 function RingSVG({ pct, size = 160, strokeWidth = 10, color = 'stroke-primary', glow = false }: { pct: number; size?: number; strokeWidth?: number; color?: string; glow?: boolean }) {
   const r = (size - strokeWidth) / 2;
@@ -25,7 +20,12 @@ function RingSVG({ pct, size = 160, strokeWidth = 10, color = 'stroke-primary', 
   );
 }
 
-export function DailyOverview({ dailyLog }: DailyOverviewProps) {
+export function DailyOverview({ dailyLog, targets }: DailyOverviewProps) {
+  const calGoal = targets?.calories ?? 2200;
+  const proteinGoal = targets?.proteinGrams ?? 160;
+  const carbsGoal = targets?.carbsGrams ?? 280;
+  const fatsGoal = targets?.fatsGrams ?? 75;
+  const waterGoal = targets?.waterMl ?? 2500;
   const cal = dailyLog?.totalCalories ?? 0;
   const protein = dailyLog?.totalProtein ?? 0;
   const carbs = dailyLog?.totalCarbs ?? 0;

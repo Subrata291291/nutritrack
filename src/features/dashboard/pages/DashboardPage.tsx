@@ -5,6 +5,7 @@ import { insightsService } from '@services/insights.service';
 import { userService } from '@services/user.service';
 import { LoadingSpinner } from '@components/shared/LoadingSpinner';
 import { toLocalDateString } from '@utils/format';
+import { getNutritionTargets } from '@utils/tdee';
 import { DailyOverview } from '../components/DailyOverview';
 import { MacroBreakdown } from '../components/MacroBreakdown';
 import { WeightTrendChart } from '../components/WeightTrendChart';
@@ -47,8 +48,9 @@ export function DashboardPage() {
   }, [today]);
 
   const displayName = user?.displayName || profile?.displayName || 'there';
+  const targets = profile ? getNutritionTargets(profile) : null;
   const remainingCalories = dailyLog
-    ? Math.max(0, 2200 - dailyLog.totalCalories)
+    ? Math.max(0, (targets?.calories ?? 2200) - dailyLog.totalCalories)
     : 0;
 
   if (loading) {
@@ -74,7 +76,7 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 lg:col-span-8">
-          <DailyOverview dailyLog={dailyLog} />
+          <DailyOverview dailyLog={dailyLog} targets={targets} />
         </div>
 
         <div className="col-span-12 lg:col-span-4">
