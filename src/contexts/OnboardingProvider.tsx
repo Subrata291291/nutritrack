@@ -1,5 +1,5 @@
 import { useState, useCallback, type ReactNode } from 'react';
-import type { OnboardingData, OnboardingMetrics, ActivityLevel, GoalType, TDEEInfo } from 'types/onboarding';
+import type { OnboardingData, OnboardingMetrics, OnboardingPreferences, ActivityLevel, GoalType, TDEEInfo } from 'types/onboarding';
 import { calculateTDEE } from '@utils/tdee';
 import { onboardingService } from '@services/onboarding.service';
 import { OnboardingContext } from './OnboardingContext';
@@ -23,8 +23,12 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     setData((prev) => ({ ...prev, goal, targetWeightKg }));
   }, []);
 
+  const setPreferences = useCallback((preferences: OnboardingPreferences) => {
+    setData((prev) => ({ ...prev, preferences }));
+  }, []);
+
   const nextStep = useCallback(() => {
-    setCurrentStep((prev) => Math.min(prev + 1, 4));
+    setCurrentStep((prev) => Math.min(prev + 1, 5));
   }, []);
 
   const prevStep = useCallback(() => {
@@ -32,7 +36,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const goToStep = useCallback((step: number) => {
-    setCurrentStep(Math.max(1, Math.min(step, 4)));
+    setCurrentStep(Math.max(1, Math.min(step, 5)));
   }, []);
 
   const calculateResults = useCallback((): TDEEInfo => {
@@ -91,6 +95,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         setMetrics,
         setActivityLevel,
         setGoal,
+        setPreferences,
         nextStep,
         prevStep,
         goToStep,

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { OnboardingData, OnboardingMetrics, ActivityLevel, GoalType, TDEEInfo } from 'types/onboarding';
+import type { OnboardingData, OnboardingMetrics, OnboardingPreferences, ActivityLevel, GoalType, TDEEInfo } from 'types/onboarding';
 
 export interface OnboardingContextValue {
   data: Partial<OnboardingData>;
@@ -10,6 +10,7 @@ export interface OnboardingContextValue {
   setMetrics: (metrics: OnboardingMetrics) => void;
   setActivityLevel: (level: ActivityLevel) => void;
   setGoal: (goal: GoalType, targetWeightKg?: number) => void;
+  setPreferences: (preferences: OnboardingPreferences) => void;
   nextStep: () => void;
   prevStep: () => void;
   goToStep: (step: number) => void;

@@ -7,7 +7,7 @@ import type { TDEEInfo } from 'types/onboarding';
 
 export function StepResults() {
   const navigate = useNavigate();
-  const { calculateResults, tdeeInfo, submitting, submitError, submitToApi } = useOnboarding();
+  const { data, calculateResults, tdeeInfo, submitting, submitError, submitToApi } = useOnboarding();
   const [info] = useState<TDEEInfo | null>(() => {
     if (tdeeInfo) return tdeeInfo;
     try {
@@ -109,6 +109,33 @@ export function StepResults() {
             <span className="material-symbols-outlined text-tertiary-container">info</span>
             <p className="text-sm text-on-surface-variant">These ratios are optimized for your goal. You can adjust these anytime in your settings.</p>
           </div>
+          <div className="mt-6 pt-6 border-t border-outline-variant">
+            <h4 className="text-sm font-semibold tracking-wider text-on-surface-variant mb-4">Your Preferences</h4>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+              <div>
+                <span className="text-on-surface-variant">Diet</span>
+                <p className="text-on-surface font-medium capitalize">{data.preferences?.diet ?? 'Not specified'}</p>
+              </div>
+              <div>
+                <span className="text-on-surface-variant">Allergies</span>
+                <p className="text-on-surface font-medium">
+                  {data.preferences?.allergies?.length ? data.preferences.allergies.join(', ') : 'None'}
+                </p>
+              </div>
+              <div>
+                <span className="text-on-surface-variant">Cuisine</span>
+                <p className="text-on-surface font-medium capitalize">{data.preferences?.cuisine ?? 'Not specified'}</p>
+              </div>
+              <div>
+                <span className="text-on-surface-variant">Cooking Skill</span>
+                <p className="text-on-surface font-medium capitalize">{data.preferences?.cookingSkill ?? 'Not specified'}</p>
+              </div>
+              <div>
+                <span className="text-on-surface-variant">Budget</span>
+                <p className="text-on-surface font-medium">{data.preferences?.budget ? `$${data.preferences.budget}` : 'Not specified'}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -121,9 +148,10 @@ export function StepResults() {
           className="group"
           disabled={submitting}
           onClick={async () => {
-            localStorage.setItem('onboarding_completed', 'true');
-            submitToApi();
-            navigate('/dashboard');
+            const success = await submitToApi();
+            if (success) {
+              navigate('/dashboard');
+            }
           }}
         >
           {submitting ? (

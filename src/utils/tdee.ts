@@ -20,9 +20,9 @@ const GOAL_CALORIE_ADJUSTMENTS: Record<GoalType, number> = {
 export function calculateBMR(metrics: OnboardingMetrics): number {
   const { age, gender, heightCm, weightKg } = metrics;
   if (gender === 'female') {
-    return 447.593 + 9.247 * weightKg + 3.098 * heightCm - 4.33 * age;
+    return 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
   }
-  return 88.362 + 13.397 * weightKg + 4.799 * heightCm - 5.677 * age;
+  return 10 * weightKg + 6.25 * heightCm - 5 * age + 5;
 }
 
 export function getNutritionTargets(profile: UserProfile): NutritionTargets {

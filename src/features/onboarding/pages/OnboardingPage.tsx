@@ -1,10 +1,11 @@
 import { useOnboarding } from '@hooks/useOnboarding';
+import { PreferenceForm } from '../components/PreferenceForm';
 import { StepMetrics } from '../components/StepMetrics';
 import { StepActivity } from '../components/StepActivity';
 import { StepGoals } from '../components/StepGoals';
 import { StepResults } from '../components/StepResults';
 
-const totalSteps = 3;
+const totalSteps = 4;
 
 export function OnboardingPage() {
   const { currentStep, nextStep, prevStep } = useOnboarding();
@@ -19,13 +20,15 @@ export function OnboardingPage() {
       case 3:
         return <StepGoals onNext={() => { nextStep(); }} onBack={prevStep} />;
       case 4:
+        return <PreferenceForm onNext={nextStep} onBack={prevStep} />;
+      case 5:
         return <StepResults />;
       default:
         return null;
     }
   };
 
-  if (currentStep === 4) {
+  if (currentStep === 5) {
     return (
       <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-12 py-8">
         <div className="w-full max-w-4xl">
@@ -60,11 +63,13 @@ export function OnboardingPage() {
               {currentStep === 1 && "Let's build your profile"}
               {currentStep === 2 && 'What is your daily activity level?'}
               {currentStep === 3 && 'What is your primary goal?'}
+              {currentStep === 4 && 'What are your food preferences?'}
             </h1>
             <p className="text-base text-on-surface-variant">
               {currentStep === 1 && 'This helps us calculate your daily calorie and macro targets.'}
               {currentStep === 2 && 'This helps us calculate your Total Daily Energy Expenditure (TDEE) more accurately.'}
               {currentStep === 3 && 'Choose the focus that best matches your fitness journey.'}
+              {currentStep === 4 && 'Tell us about your dietary needs and cooking habits.'}
             </p>
           </header>
           {renderStep()}

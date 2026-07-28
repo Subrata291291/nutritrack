@@ -7,9 +7,9 @@ import { Select } from '@components/ui/Select';
 import { Button } from '@components/ui/Button';
 
 const metricsSchema = z.object({
-  age: z.coerce.number().min(10, 'Must be at least 10').max(120, 'Must be under 120'),
+  age: z.coerce.number().min(13, 'Must be at least 13').max(120, 'Must be under 120'),
   gender: z.enum(['male', 'female', 'non-binary', 'prefer-not-to-say']),
-  heightCm: z.coerce.number().min(50, 'Must be at least 50cm').max(300, 'Must be under 300cm'),
+  heightCm: z.coerce.number().min(100, 'Must be at least 100cm').max(300, 'Must be under 300cm'),
   weightKg: z.coerce.number().min(20, 'Must be at least 20kg').max(500, 'Must be under 500kg'),
 });
 

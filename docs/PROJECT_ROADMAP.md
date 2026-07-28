@@ -33,6 +33,8 @@ The product should be scalable, maintainable, and suitable for both individual u
 - Nutrition Log
 - User Settings
 - Documentation Foundation
+- Onboarding Wizard (BMR, TDEE, macros)
+- Dashboard dynamic nutrition targets
 
 ---
 
@@ -80,7 +82,7 @@ Future
 
 Status
 
-⬜ Pending
+🟩 Completed
 
 ---
 
