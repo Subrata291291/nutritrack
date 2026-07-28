@@ -21,11 +21,11 @@ function RingSVG({ pct, size = 160, strokeWidth = 10, color = 'stroke-primary', 
 }
 
 export function DailyOverview({ dailyLog, targets }: DailyOverviewProps) {
-  const calGoal = targets?.calories ?? 2200;
-  const proteinGoal = targets?.proteinGrams ?? 160;
-  const carbsGoal = targets?.carbsGrams ?? 280;
-  const fatsGoal = targets?.fatsGrams ?? 75;
-  const waterGoal = targets?.waterMl ?? 2500;
+  const calGoal = targets?.calories || 2200;
+  const proteinGoal = targets?.proteinGrams || 160;
+  const carbsGoal = targets?.carbsGrams || 280;
+  const fatsGoal = targets?.fatsGrams || 75;
+  const waterGoal = targets?.waterMl || 2500;
   const cal = dailyLog?.totalCalories ?? 0;
   const protein = dailyLog?.totalProtein ?? 0;
   const carbs = dailyLog?.totalCarbs ?? 0;
