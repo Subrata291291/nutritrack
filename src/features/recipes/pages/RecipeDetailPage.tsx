@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Badge } from '@components/ui/Badge';
 import { Card } from '@components/ui/Card';
+import { Button } from '@components/ui/Button';
 import { LoadingSpinner } from '@components/shared/LoadingSpinner';
 import { EmptyState } from '@components/shared/EmptyState';
 import { NutritionCard } from '../components/NutritionCard';
@@ -17,6 +18,7 @@ export function RecipeDetailPage() {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [retryCounter, setRetryCounter] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -37,7 +39,13 @@ export function RecipeDetailPage() {
     }
     fetchRecipe();
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, retryCounter]);
+
+  const handleRetry = () => {
+    setLoading(true);
+    setError(false);
+    setRetryCounter((c) => c + 1);
+  };
 
   if (loading) {
     return (
@@ -50,7 +58,7 @@ export function RecipeDetailPage() {
   if (error || !recipe) {
     return (
       <div className="bg-background min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <EmptyState icon="error" title="Recipe not found" description="The recipe you're looking for doesn't exist or has been removed." />
+        <EmptyState icon="error" title="Recipe not found" description="The recipe you're looking for doesn't exist or has been removed." action={<Button onClick={handleRetry}>Try Again</Button>} />
       </div>
     );
   }

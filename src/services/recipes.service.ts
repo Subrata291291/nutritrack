@@ -3,9 +3,12 @@ import { endpoints } from '@api/endpoints';
 import type { Recipe } from 'types/recipe';
 
 class RecipesService {
-  async getRecipes(params?: { page?: number; per_page?: number; category?: string; search?: string }): Promise<Recipe[]> {
+  async getRecipes(params?: { page?: number; per_page?: number; category?: string; search?: string }): Promise<{ recipes: Recipe[]; total: number }> {
     const response = await apiClient.get(endpoints.recipes.list, { params });
-    return response.data?.data ?? response.data;
+    const raw = response.data?.data ?? response.data;
+    const recipes: Recipe[] = Array.isArray(raw) ? raw : [];
+    const total = response.data?.count ?? recipes.length;
+    return { recipes, total };
   }
 
   async getRecipeDetail(id: number): Promise<Recipe> {

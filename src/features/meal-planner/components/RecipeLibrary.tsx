@@ -16,7 +16,7 @@ export function RecipeLibrary() {
     const fetchRecipes = async () => {
       setLoading(true);
       try {
-        const data = await recipesService.getRecipes();
+        const { recipes: data } = await recipesService.getRecipes();
         setRecipes(data);
       } catch {
         setRecipes([]);
@@ -78,7 +78,7 @@ export function RecipeLibrary() {
           </div>
         ) : (
           <div className="space-y-2">
-            {filtered.map((recipe, idx) => (
+            {filtered.map((recipe) => (
               <button key={recipe.id} onClick={() => navigate(`/recipes/${recipe.id}`)}
                 className="w-full flex gap-3 p-3 rounded-xl hover:bg-surface-container-low active:scale-[0.98] transition-all cursor-pointer group text-left border border-transparent hover:border-outline-variant/50"
               >
