@@ -32,8 +32,6 @@ export function FoodListPage() {
     ? foods.filter((f) => f.name.toLowerCase().includes(search.toLowerCase()) || (f.category || '').toLowerCase().includes(search.toLowerCase()))
     : foods;
 
-  const categories = [...new Set(foods.map((f) => f.category || 'Other').filter(Boolean))];
-
   return (
     <div className="bg-background min-h-[calc(100vh-4rem)]">
       <div className="p-margin-mobile md:p-margin-desktop max-w-7xl mx-auto w-full space-y-xl">

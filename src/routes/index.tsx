@@ -8,7 +8,7 @@ import { LoginPage, RegisterPage, ForgotPasswordPage } from '@features/auth';
 import { DashboardPage } from '@features/dashboard';
 import { NutritionLogPage } from '@features/nutrition-log';
 import { MealPlannerPage } from '@features/meal-planner';
-import { RecipesListPage, RecipeDetailPage } from '@features/recipes';
+import { RecipesListPage, RecipeDetailPage, FavoritesPage } from '@features/recipes';
 import { FoodListPage, FoodDetailPage } from '@features/food';
 import { PricingPage } from '@features/pricing';
 import { CheckoutPage } from '@features/checkout';
@@ -39,6 +39,7 @@ export function AppRoutes() {
           <Route path="/planner" element={<MealPlannerPage />} />
           <Route path="/recipes" element={<RecipesListPage />} />
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/food" element={<FoodListPage />} />
           <Route path="/food/:id" element={<FoodDetailPage />} />
           <Route path="/insights" element={<InsightsPage />} />

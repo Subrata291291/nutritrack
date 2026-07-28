@@ -31,6 +31,8 @@ export const endpoints = {
     list: `${WP}${NS}/recipes`,
     detail: (id: number) => `${WP}${NS}/recipes/${id}`,
     categories: `${WP}${NS}/recipes/categories`,
+    favorite: (id: number) => `${WP}${NS}/recipes/${id}/favorite`,
+    favorites: `${WP}${NS}/user/favorites`,
   },
   insights: {
     weight: `${WP}${NS}/insights/weight`,
@@ -55,5 +57,9 @@ export const endpoints = {
   foods: {
     list: `${WP}${NS}/foods`,
     detail: (id: number) => `${WP}${NS}/foods/${id}`,
+  },
+  ai: {
+    generatePlan: `${WP}${NS}/ai/generate-plan`,
+    suggestSwap: `${WP}${NS}/ai/suggest-swap`,
   },
 } as const;

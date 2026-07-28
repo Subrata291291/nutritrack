@@ -9,6 +9,7 @@ import { NutritionCard } from '../components/NutritionCard';
 import { QuickActions } from '../components/QuickActions';
 import { IngredientsList } from '../components/IngredientsList';
 import { PreparationSteps } from '../components/PreparationSteps';
+import { FavoriteButton } from '../components/FavoriteButton';
 import { recipesService } from '@services/recipes.service';
 import { addRecentRecipe } from '@services/recent-recipes.service';
 import type { Recipe } from 'types/recipe';
@@ -19,6 +20,14 @@ export function RecipeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [retryCounter, setRetryCounter] = useState(0);
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+    recipesService.getFavoriteRecipes().then((recipes) => {
+      setIsFavorited(recipes.some((r) => r.id === Number(id)));
+    }).catch(() => {});
+  }, [id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,6 +81,13 @@ export function RecipeDetailPage() {
           <div className="w-full h-full bg-gradient-to-br from-primary-container/40 to-primary-container/10" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute top-4 right-4">
+          <FavoriteButton
+            recipeId={recipe.id}
+            isFavorited={isFavorited}
+            onToggle={setIsFavorited}
+          />
+        </div>
         <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="flex items-center gap-3 mb-3">
             {recipe.tags?.map((tag) => (

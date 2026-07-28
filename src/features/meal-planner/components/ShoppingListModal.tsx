@@ -1,4 +1,9 @@
-import type { ShoppingList } from 'types/meal-plan';
+import { useEffect, useCallback } from 'react';
+import { Modal } from '@components/shared/Modal';
+import { Button } from '@components/ui/Button';
+import { ShoppingListCategory } from './ShoppingListCategory';
+import { useShoppingList } from '../hooks/useShoppingList';
+import type { MealPlanDay } from 'types/meal-plan';
 
 const categoryLabels: Record<string, string> = {
   produce: 'Produce',
@@ -12,83 +17,98 @@ const categoryLabels: Record<string, string> = {
 interface ShoppingListModalProps {
   isOpen: boolean;
   onClose: () => void;
-  shoppingList: ShoppingList | null;
-  weekStart: string;
+  days: MealPlanDay[];
 }
 
-function CategorySection({ category, items }: { category: string; items: { id: number; name: string; quantity: string; checked: boolean }[] }) {
-  if (items.length === 0) return null;
+export function ShoppingListModal({ isOpen, onClose, days }: ShoppingListModalProps) {
+  const { loading, error, items, generated, generate, toggleChecked, reset } = useShoppingList();
+
+  useEffect(() => {
+    if (isOpen && !generated && !loading) {
+      generate(days);
+    }
+  }, [isOpen, generated, loading, generate, days]);
+
+  const handleClose = useCallback(() => {
+    reset();
+    onClose();
+  }, [reset, onClose]);
+
+  const handlePrint = useCallback(() => {
+    window.print();
+  }, []);
+
+  const categories = [...new Set(items.map((i) => i.category))].sort((a, b) => {
+    const order = ['produce', 'proteins', 'dairy', 'grains', 'spices', 'other'];
+    return order.indexOf(a) - order.indexOf(b);
+  });
 
   return (
-    <div>
-      <h4 className="text-sm font-semibold text-on-surface mb-2">{categoryLabels[category] || category}</h4>
-      <div className="space-y-1">
-        {items.map((item) => (
-          <label key={item.id} className="flex items-center gap-3 p-1.5 rounded hover:bg-surface-container-low cursor-pointer">
-            <input
-              type="checkbox"
-              defaultChecked={item.checked}
-              className="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary"
-            />
-            <span className={`text-sm ${item.checked ? 'line-through text-on-surface-variant' : 'text-on-surface'}`}>
-              {item.name}
-            </span>
-            <span className="text-xs text-on-surface-variant ml-auto">{item.quantity}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function ShoppingListModal({ isOpen, onClose, shoppingList, weekStart }: ShoppingListModalProps) {
-  if (!isOpen) return null;
-
-  const categories = shoppingList
-    ? [...new Set(shoppingList.items.map((i) => i.category))]
-    : [];
-
-  const formatWeek = () => {
-    const start = new Date(weekStart);
-    const end = new Date(weekStart);
-    end.setDate(end.getDate() + 6);
-    const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-    return `${start.toLocaleDateString('en-US', opts)} - ${end.toLocaleDateString('en-US', opts)}`;
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-surface-container-lowest rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[85vh] flex flex-col">
-        <div className="flex items-center justify-between p-6 pb-4 border-b border-outline-variant/40">
-          <div>
-            <h2 className="text-headline-md font-semibold text-on-surface">Shopping List</h2>
-            <p className="text-sm text-on-surface-variant">{formatWeek()}</p>
+    <Modal open={isOpen} onClose={handleClose} title="Shopping List" className="max-w-lg">
+      {/* Loading */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-3">
+            <span className="material-symbols-outlined text-[36px] text-secondary animate-spin">sync</span>
+            <p className="text-label-sm text-on-surface-variant">Building grocery list...</p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors">
-            <span className="material-symbols-outlined text-on-surface-variant">close</span>
-          </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-6 space-y-5">
-          {!shoppingList || shoppingList.items.length === 0 ? (
-            <p className="text-sm text-on-surface-variant text-center py-4">No items in your shopping list yet.</p>
-          ) : (
-            categories.map((cat) => (
-              <CategorySection key={cat} category={cat} items={shoppingList.items.filter((i) => i.category === cat)} />
-            ))
-          )}
+      )}
+
+      {/* Error */}
+      {error && !loading && (
+        <div className="flex flex-col items-center py-8 gap-3">
+          <span className="material-symbols-outlined text-[40px] text-error/60">error</span>
+          <p className="text-body-md text-on-surface-variant font-semibold">Failed to generate list</p>
+          <p className="text-label-sm text-on-surface-variant text-center">{error}</p>
+          <div className="flex gap-2 mt-2">
+            <Button variant="ghost" size="sm" onClick={handleClose}>Cancel</Button>
+            <Button variant="primary" size="sm" onClick={() => generate(days)}>
+              <span className="material-symbols-outlined text-sm">refresh</span>
+              Retry
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-3 p-6 pt-4 border-t border-outline-variant/40">
-          <button className="flex-1 py-3 bg-surface-container-low text-on-surface-variant text-sm font-semibold rounded-xl border border-outline-variant hover:bg-surface-container transition-colors flex items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-base">print</span>
+      )}
+
+      {/* Empty state */}
+      {!loading && !error && generated && items.length === 0 && (
+        <div className="flex flex-col items-center py-8 gap-2">
+          <span className="material-symbols-outlined text-[40px] text-on-surface-variant/40">shopping_cart</span>
+          <p className="text-body-md text-on-surface-variant font-semibold">No items needed</p>
+          <p className="text-label-sm text-on-surface-variant text-center">
+            Your meal plan doesn't have any recipes with ingredients yet.
+          </p>
+        </div>
+      )}
+
+      {/* Items */}
+      {!loading && !error && items.length > 0 && (
+        <div className="space-y-4 max-h-[55vh] overflow-y-auto pr-1">
+          {categories.map((cat) => (
+            <ShoppingListCategory
+              key={cat}
+              label={categoryLabels[cat] || cat}
+              icon={cat}
+              items={items.filter((i) => i.category === cat)}
+              onToggle={toggleChecked}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Footer */}
+      {!loading && !error && generated && (
+        <div className="flex gap-3 mt-4 pt-4 border-t border-outline-variant/40">
+          <Button variant="outline" onClick={handlePrint} className="flex-1">
+            <span className="material-symbols-outlined text-sm">print</span>
             Print
-          </button>
-          <button className="flex-1 py-3 bg-primary text-on-primary text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-base">send</span>
-            Send
-          </button>
+          </Button>
+          <Button variant="ghost" onClick={handleClose} className="flex-1">
+            Close
+          </Button>
         </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 }

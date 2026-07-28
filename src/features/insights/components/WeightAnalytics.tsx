@@ -47,7 +47,6 @@ export function WeightAnalytics({ currentWeight, startWeight, targetWeight, week
   const areaPath = points.length > 0 ? `${linePath} L${xScale(entries.length - 1)},${chartH} L${xScale(0)},${chartH} Z` : '';
 
   const targetY = targetWeight > 0 ? yScale(targetWeight) : null;
-  const startY = startWeight > 0 ? yScale(startWeight) : null;
 
   const labelIndices = entries.length <= 5
     ? entries.map((_, i) => i)
@@ -56,10 +55,6 @@ export function WeightAnalytics({ currentWeight, startWeight, targetWeight, week
   const totalLoss = startWeight - currentWeight;
   const progressPct = (startWeight - targetWeight) > 0
     ? Math.min(Math.max(totalLoss / (startWeight - targetWeight), 0), 1)
-    : 0;
-
-  const lossPct = Math.abs(weeklyChange) > 0
-    ? Math.min(Math.abs(weeklyChange) / 1.5, 1)
     : 0;
 
   const calPct = targetWeight > 0 && startWeight > 0

@@ -1,5 +1,4 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { cn } from '@utils/cn';
 
 export function AuthShell() {
   const { pathname } = useLocation();

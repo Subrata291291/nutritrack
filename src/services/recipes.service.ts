@@ -20,6 +20,21 @@ class RecipesService {
     const response = await apiClient.get(endpoints.recipes.categories);
     return response.data?.data ?? response.data;
   }
+
+  async favoriteRecipe(id: number): Promise<{ favorited: boolean }> {
+    const response = await apiClient.post(endpoints.recipes.favorite(id));
+    return response.data ?? { favorited: true };
+  }
+
+  async unfavoriteRecipe(id: number): Promise<{ favorited: boolean }> {
+    const response = await apiClient.delete(endpoints.recipes.favorite(id));
+    return response.data ?? { favorited: false };
+  }
+
+  async getFavoriteRecipes(): Promise<Recipe[]> {
+    const response = await apiClient.get(endpoints.recipes.favorites);
+    return response.data?.data ?? response.data;
+  }
 }
 
 export const recipesService = new RecipesService();
