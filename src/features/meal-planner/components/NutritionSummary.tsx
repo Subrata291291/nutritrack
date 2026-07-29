@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react';
-import { userService } from '@services/user.service';
-import { getNutritionTargets } from '@utils/tdee';
-import { LoadingSpinner } from '@components/shared/LoadingSpinner';
+import { useAuth } from '@hooks/useAuth';
 import type { MealPlanDay } from 'types/meal-plan';
 import type { NutritionTargets } from 'types/nutrition';
 
@@ -17,36 +14,8 @@ const metrics: { key: keyof NutritionTargets; label: string; icon: string; dayKe
 ];
 
 export function NutritionSummary({ day }: NutritionSummaryProps) {
-  const [targets, setTargets] = useState<NutritionTargets | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    const fetchTargets = async () => {
-      try {
-        const profile = await userService.getProfile();
-        if (!cancelled && profile) {
-          setTargets(getNutritionTargets(profile));
-        }
-      } catch {
-        if (!cancelled) setTargets(null);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    fetchTargets();
-    return () => { cancelled = true; };
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="p-3 pt-2.5 border-t border-outline-variant/40">
-        <div className="flex items-center justify-center py-2">
-          <LoadingSpinner size="sm" />
-        </div>
-      </div>
-    );
-  }
+  const { nutritionTargets } = useAuth();
+  const targets = nutritionTargets;
 
   return (
     <div className="p-3 pt-2.5 border-t border-outline-variant/40 space-y-3">

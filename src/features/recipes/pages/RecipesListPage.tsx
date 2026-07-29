@@ -7,9 +7,11 @@ import { Button } from '@components/ui/Button';
 import { SearchBar, Pagination, RecipeCard } from '../components';
 import { useRecipes } from '../hooks/useRecipes';
 import { recipesService } from '@services/recipes.service';
+import { useRecipeGeneration } from '@hooks/useRecipeGeneration';
 
 
 export function RecipesListPage() {
+  const { isGenerating, job, error: genError, triggerGeneration, regenerate, clearError } = useRecipeGeneration();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
@@ -60,6 +62,32 @@ export function RecipesListPage() {
 
         <SearchBar />
 
+        {isGenerating && (
+          <div className="bg-primary-container border border-primary rounded-xl px-4 py-3 flex items-center gap-3">
+            <LoadingSpinner size="sm" />
+            <div className="flex-1">
+              <p className="font-body-sm text-body-sm text-on-primary-container">
+                Generating your personalized recipes{job ? ` (${job.progress}%)` : '...'}
+              </p>
+              <p className="font-body-xs text-body-xs text-on-primary-container/70">
+                This usually takes a few seconds. You can check back shortly.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {genError && (
+          <div className="bg-error-container border border-error rounded-xl px-4 py-3 flex items-center gap-3">
+            <span className="material-icons text-error text-lg">error</span>
+            <div className="flex-1">
+              <p className="font-body-sm text-body-sm text-on-error-container">{genError}</p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => { clearError(); regenerate(); }}>
+              Retry
+            </Button>
+          </div>
+        )}
+
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => handleCategoryClick(undefined)}
@@ -100,7 +128,12 @@ export function RecipesListPage() {
           ) : activeCategory ? (
             <EmptyState icon="restaurant" title="No recipes in this category" description="Try a different category." />
           ) : (
-            <EmptyState icon="restaurant" title="No recipes found" description="Try a different category or check back later." />
+            <EmptyState
+              icon="restaurant"
+              title="No recipes found"
+              description="Your personalized recipe library hasn't been generated yet."
+              action={<Button onClick={triggerGeneration} disabled={isGenerating}>Generate Recipes</Button>}
+            />
           )
         ) : (
           <>

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { nutritionService } from '@services/nutrition.service';
 import { getRecentRecipes } from '@services/recent-recipes.service';
 import type { RecentRecipeItem } from '@services/recent-recipes.service';
+import { useAuth } from '@hooks/useAuth';
 import { DateNavigator } from '../components/DateNavigator';
 import { DailyProgressCard } from '../components/DailyProgressCard';
 import { TimelineMealCard } from '../components/TimelineMealCard';
@@ -13,6 +14,7 @@ import { FoodPickerModal } from '../components/FoodPickerModal';
 import { LoadingSpinner } from '@components/shared/LoadingSpinner';
 import { parseLocalDate, toLocalDateString } from '@utils/format';
 import type { DailyLog, MealEntry, FoodItem } from 'types/nutrition';
+import type { NutritionTargets } from 'types/nutrition';
 
 const mealTypeConfig = [
   { type: 'breakfast' as const, icon: 'wb_sunny', title: 'Breakfast', emptyIcon: 'wb_sunny', emptyMessage: 'Nothing logged for breakfast yet.', ctaLabel: 'Log Breakfast' },
@@ -21,9 +23,9 @@ const mealTypeConfig = [
   { type: 'snack' as const, icon: 'cookie', title: 'Snacks', emptyIcon: 'cookie', emptyMessage: 'Nothing logged for snacks yet.', ctaLabel: 'Log Snack' },
 ];
 
-const defaultTargets = { calories: 2400, protein: 160, carbs: 280, fats: 75 };
-
 export function NutritionLogPage() {
+  const { nutritionTargets } = useAuth();
+  const targets: NutritionTargets = nutritionTargets || { calories: 2400, proteinGrams: 160, carbsGrams: 280, fatsGrams: 75, waterMl: 2500 };
   const [searchParams] = useSearchParams();
   const today = toLocalDateString(new Date());
   const initialDate = searchParams.get('date') || today;
@@ -116,7 +118,12 @@ export function NutritionLogPage() {
           carbs: dailyLog?.totalCarbs || 0,
           fats: dailyLog?.totalFats || 0,
         }}
-        targets={defaultTargets}
+        targets={{
+          calories: targets.calories,
+          protein: targets.proteinGrams,
+          carbs: targets.carbsGrams,
+          fats: targets.fatsGrams,
+        }}
       />
       <div className="grid grid-cols-12 gap-xl items-start">
         <div className="col-span-12 lg:col-span-8">
@@ -130,7 +137,7 @@ export function NutritionLogPage() {
                 icon={config.icon}
                 title={config.title}
                 calories={calories}
-                targetCalories={defaultTargets.calories}
+                targetCalories={targets.calories}
                 items={meals}
                 empty={meals.length === 0}
                 emptyIcon={config.emptyIcon}

@@ -7,7 +7,10 @@ import { LoadingSpinner } from '@components/shared/LoadingSpinner';
 import { userService } from '@services/user.service';
 import { authService } from '@services/auth.service';
 import { useTheme } from '@contexts/ThemeContext';
-import type { UserProfile, UserSettings } from 'types/settings';
+import { useProfile } from '@hooks/useProfile';
+import { useAuth } from '@hooks/useAuth';
+import { useRecipeGeneration } from '@hooks/useRecipeGeneration';
+import type { UserSettings } from 'types/settings';
 
 type ModalType = 'personalInfo' | 'password' | 'tdee' | 'macros' | 'help' | 'privacy' | 'about' | null;
 type FeedbackType = { type: 'success' | 'error'; message: string } | null;
@@ -97,17 +100,18 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
 export function SettingsPage() {
   const navigate = useNavigate();
   const { setTheme } = useTheme();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const { profile, ensureProfile, updateProfile: updateAuthProfile } = useProfile();
+  const { user } = useAuth();
+  const { isGenerating, regenerate } = useRecipeGeneration();
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState<FeedbackType>(null);
   const [modal, setModal] = useState<ModalType>(null);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const storedAuth = authService.getStoredAuth();
 
   const [editName, setEditName] = useState('');
-  const editEmail = storedAuth?.user?.email ?? '';
+  const editEmail = user?.email ?? '';
   const [editEmailDraft, setEditEmailDraft] = useState('');
   const [editPassword, setEditPassword] = useState('');
   const [editPasswordConfirm, setEditPasswordConfirm] = useState('');
@@ -117,14 +121,12 @@ export function SettingsPage() {
     async function load() {
       try {
         if (!cancelled) setLoading(true);
-        const [prof, sett] = await Promise.all([
-          userService.getProfile(),
+        await ensureProfile();
+        const [sett] = await Promise.all([
           userService.getSettings(),
         ]);
         if (!cancelled) {
-          setProfile(prof);
           setSettings(sett);
-          setEditName(prof.displayName || '');
         }
       } catch {
         if (!cancelled) setFeedback({ type: 'error', message: 'Failed to load settings.' });
@@ -134,7 +136,7 @@ export function SettingsPage() {
     }
     load();
     return () => { cancelled = true; };
-  }, []);
+  }, [ensureProfile]);
 
   async function handleSaveSettings(patch: Partial<UserSettings>) {
     if (!settings) return;
@@ -164,7 +166,8 @@ export function SettingsPage() {
     setFeedback(null);
     try {
       const updated = await userService.updateProfile({ displayName: editName });
-      setProfile({ ...profile, ...updated, displayName: editName });
+      const merged = { ...profile, ...updated, displayName: editName };
+      updateAuthProfile(merged);
       setFeedback({ type: 'success', message: 'Profile updated.' });
       setModal(null);
     } catch {
@@ -207,7 +210,10 @@ export function SettingsPage() {
       const url = await userService.uploadAvatar(file);
       if (url) {
         await userService.updateProfile({ avatar: url });
-        if (profile) setProfile({ ...profile, avatar: url });
+        if (profile) {
+          const merged = { ...profile, avatar: url };
+          updateAuthProfile(merged);
+        }
         setFeedback({ type: 'success', message: 'Avatar updated.' });
       }
     } catch {
@@ -222,7 +228,7 @@ export function SettingsPage() {
     ? profile.displayName.split(' ').map(s => s[0]).join('').toUpperCase().slice(0, 2)
     : '?';
 
-  const membershipLabel = storedAuth?.user?.membership === 'pro' ? 'Premium User' : storedAuth?.user?.membership === 'team' ? 'Team User' : 'Free User';
+  const membershipLabel = user?.membership === 'pro' ? 'Premium User' : user?.membership === 'team' ? 'Team User' : 'Free User';
 
   return (
     <div className="bg-background min-h-screen pb-8">
@@ -284,17 +290,17 @@ export function SettingsPage() {
                       <h2 className="text-headline-md font-bold text-on-surface">{profile?.displayName ?? 'User'}</h2>
                       <span className={cn(
                         'px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide border',
-                        storedAuth?.user?.membership === 'pro'
+                        user?.membership === 'pro'
                           ? 'bg-amber-500/8 text-amber-600 border-amber-500/15'
                           : 'bg-surface-container-low text-on-surface-variant/60 border-outline-variant/40'
                       )}>
                         <span className="flex items-center gap-1">
-                          {storedAuth?.user?.membership === 'pro' && <span className="material-symbols-outlined text-[11px]">workspace_premium</span>}
+                          {user?.membership === 'pro' && <span className="material-symbols-outlined text-[11px]">workspace_premium</span>}
                           {membershipLabel}
                         </span>
                       </span>
                     </div>
-                    <p className="text-body-sm text-on-surface-variant/60 mt-0.5">{storedAuth?.user?.email ?? ''}</p>
+                    <p className="text-body-sm text-on-surface-variant/60 mt-0.5">{user?.email ?? ''}</p>
                   </div>
                 </div>
               </div>
@@ -349,6 +355,9 @@ export function SettingsPage() {
                 description={profile?.goal === 'lose-weight' ? 'Lose Weight' : profile?.goal === 'gain-muscle' ? 'Gain Muscle' : 'Maintain Weight'} />
               <SettingsRow icon="pie_chart" iconBg="bg-violet-500/8 text-violet-500" label="Macro Targets" description="Protein, carbs, fats distribution"
                 onClick={() => setModal('macros')} />
+              <SettingsRow icon="autorenew" iconBg="bg-indigo-500/8 text-indigo-500" label="Regenerate Recipes"
+                description={isGenerating ? 'Generating your personalized recipes...' : 'Recreate your AI recipe library'}
+                onClick={isGenerating ? undefined : regenerate} />
             </SectionCard>
 
             {/* Subscription */}
@@ -368,16 +377,16 @@ export function SettingsPage() {
                     <span className="material-symbols-outlined text-amber-500 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-body-md font-bold text-on-surface">{storedAuth?.user?.membership === 'pro' ? 'Manage Pro Subscription' : 'Upgrade to NutriTrack Pro'}</p>
+                    <p className="text-body-md font-bold text-on-surface">{user?.membership === 'pro' ? 'Manage Pro Subscription' : 'Upgrade to NutriTrack Pro'}</p>
                     <p className="text-label-sm text-on-surface-variant/70 mt-0.5">Unlock AI insights, meal planning, and more</p>
                   </div>
                   <span className={cn(
                     'px-3 py-1.5 rounded-lg text-label-sm font-bold border',
-                    storedAuth?.user?.membership === 'pro'
+                    user?.membership === 'pro'
                       ? 'bg-amber-500/8 text-amber-600 border-amber-500/15'
                       : 'bg-surface-container-low text-on-surface-variant/60 border-outline-variant/30'
                   )}>
-                    {storedAuth?.user?.membership === 'pro' ? 'Active' : 'Free'}
+                    {user?.membership === 'pro' ? 'Active' : 'Free'}
                   </span>
                   <span className="material-symbols-outlined text-[18px] text-on-surface-variant/20 group-hover:text-on-surface-variant/50 group-hover:translate-x-0.5 transition-all">chevron_right</span>
                 </div>

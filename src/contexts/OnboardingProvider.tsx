@@ -2,6 +2,9 @@ import { useState, useCallback, type ReactNode } from 'react';
 import type { OnboardingData, OnboardingMetrics, OnboardingPreferences, ActivityLevel, GoalType, TDEEInfo } from 'types/onboarding';
 import { calculateTDEE } from '@utils/tdee';
 import { onboardingService } from '@services/onboarding.service';
+import { userService } from '@services/user.service';
+import { aiRecipesService } from '@services/ai-recipes.service';
+import { useAuth } from '@hooks/useAuth';
 import { OnboardingContext } from './OnboardingContext';
 
 export function OnboardingProvider({ children }: { children: ReactNode }) {
@@ -10,6 +13,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const { updateProfile, user } = useAuth();
 
   const setMetrics = useCallback((metrics: OnboardingMetrics) => {
     setData((prev) => ({ ...prev, metrics }));
@@ -67,6 +71,22 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         onboardingData: data,
         tdeeInfo,
       });
+
+      const profileData = {
+        displayName: user?.displayName || '',
+        age: data.metrics.age,
+        gender: data.metrics.gender,
+        heightCm: data.metrics.heightCm,
+        weightKg: data.metrics.weightKg,
+        activityLevel: data.activityLevel,
+        goal: data.goal,
+        targetWeightKg: data.targetWeightKg || 0,
+      };
+      await userService.updateProfile(profileData);
+      updateProfile(profileData);
+
+      aiRecipesService.triggerGeneration().catch(() => {});
+
       localStorage.setItem('onboarding_completed', 'true');
       return true;
     } catch (err) {
@@ -75,7 +95,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     } finally {
       setSubmitting(false);
     }
-  }, [data, tdeeInfo]);
+  }, [data, tdeeInfo, user, updateProfile]);
 
   const reset = useCallback(() => {
     setData({});

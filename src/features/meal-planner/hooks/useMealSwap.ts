@@ -2,8 +2,7 @@ import { useState, useCallback } from 'react';
 import { apiClient } from '@api/client';
 import { endpoints } from '@api/endpoints';
 import { mealPlansService } from '@services/meal-plans.service';
-import { userService } from '@services/user.service';
-import { getNutritionTargets } from '@utils/tdee';
+import { useProfile } from '@hooks/useProfile';
 import type { AISwapResponse, SwapAlternative } from 'types/ai-meal-plan';
 import type { MealPlanDay } from 'types/meal-plan';
 
@@ -15,6 +14,7 @@ interface MealSwapState {
 }
 
 export function useMealSwap() {
+  const { nutritionTargets, ensureProfile } = useProfile();
   const [state, setState] = useState<MealSwapState>({
     loading: false,
     error: null,
@@ -29,9 +29,7 @@ export function useMealSwap() {
   ) => {
     setState({ loading: true, error: null, alternatives: [], warnings: [] });
     try {
-      const profile = await userService.getProfile();
-      const nutritionTargets = profile ? getNutritionTargets(profile) : null;
-
+      await ensureProfile();
       const response = await apiClient.post<AISwapResponse>(
         endpoints.ai.suggestSwap,
         { mealId, mealType, currentDayTotals, nutritionTargets },
@@ -50,7 +48,7 @@ export function useMealSwap() {
       const message = err instanceof Error ? err.message : 'Failed to get swap suggestions.';
       setState({ loading: false, error: message, alternatives: [], warnings: [] });
     }
-  }, []);
+  }, [nutritionTargets, ensureProfile]);
 
   const applySwap = useCallback(async (
     alternative: SwapAlternative,

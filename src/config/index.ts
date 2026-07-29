@@ -4,6 +4,10 @@ export const config = {
     jwtEndpoint: import.meta.env.VITE_WP_JWT_ENDPOINT || '/jwt-auth/v1/token',
     namespace: '/nutritrack/v1',
   },
+  ai: {
+    recipeGenerationEnabled: import.meta.env.VITE_AI_RECIPE_GEN_ENABLED !== 'false',
+    pollInterval: parseInt(import.meta.env.VITE_AI_RECIPE_POLL_INTERVAL || '5000', 10),
+  },
   stripe: {
     publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
   },

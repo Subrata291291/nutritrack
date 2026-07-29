@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useProfile } from '@hooks/useProfile';
 import { useAuth } from '@hooks/useAuth';
 import { nutritionService } from '@services/nutrition.service';
 import { insightsService } from '@services/insights.service';
-import { userService } from '@services/user.service';
 import { LoadingSpinner } from '@components/shared/LoadingSpinner';
 import { toLocalDateString } from '@utils/format';
-import { getNutritionTargets } from '@utils/tdee';
 import { DailyOverview } from '../components/DailyOverview';
 import { MacroBreakdown } from '../components/MacroBreakdown';
 import { WeightTrendChart } from '../components/WeightTrendChart';
@@ -13,31 +12,29 @@ import { NextMealWidget } from '../components/NextMealWidget';
 import { QuickStats } from '../components/QuickStats';
 import type { DailyLog } from 'types/nutrition';
 import type { WeightAnalytics, Insight } from 'types/insights';
-import type { UserProfile } from 'types/settings';
 
 export function DashboardPage() {
   const { user } = useAuth();
+  const { profile, nutritionTargets, ensureProfile } = useProfile();
   const [loading, setLoading] = useState(true);
   const [dailyLog, setDailyLog] = useState<DailyLog | null>(null);
   const [weightAnalytics, setWeightAnalytics] = useState<WeightAnalytics | null>(null);
   const [insights, setInsights] = useState<Insight[]>([]);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
 
   const today = toLocalDateString(new Date());
 
   useEffect(() => {
     const fetchData = async () => {
+      await ensureProfile();
       try {
-        const [log, analytics, smartInsights, userProfile] = await Promise.all([
+        const [log, analytics, smartInsights] = await Promise.all([
           nutritionService.getDailyLog(today),
           insightsService.getWeightAnalytics(),
           insightsService.getSmartInsights(),
-          userService.getProfile(),
         ]);
         setDailyLog(log);
         setWeightAnalytics(analytics);
         setInsights(smartInsights);
-        setProfile(userProfile);
       } catch (err) {
         console.error('Failed to load dashboard data', err);
       } finally {
@@ -45,12 +42,12 @@ export function DashboardPage() {
       }
     };
     fetchData();
-  }, [today]);
+  }, [today, ensureProfile]);
 
   const displayName = user?.displayName || profile?.displayName || 'there';
-  const targets = profile ? getNutritionTargets(profile) : null;
+  const targets = nutritionTargets;
   const remainingCalories = dailyLog
-    ? Math.max(0, (targets?.calories ?? 2200) - dailyLog.totalCalories)
+    ? Math.max(0, (targets?.calories ?? 0) - dailyLog.totalCalories)
     : 0;
 
   if (loading) {

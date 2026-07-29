@@ -1,5 +1,6 @@
-const cache = new Map<string, { data: unknown; timestamp: number }>();
-const DEFAULT_TTL = 60000;
+const cache = new Map<string, { data: unknown; timestamp: number; ttl: number }>();
+export const DEFAULT_TTL = 60000;
+export const PROFILE_TTL = 300000;
 
 export function getCacheKey(url: string, params?: Record<string, unknown>): string {
   if (!params) return url;
@@ -13,17 +14,34 @@ export function getCacheKey(url: string, params?: Record<string, unknown>): stri
 export function getFromCache<T>(key: string, ttl = DEFAULT_TTL): T | null {
   const entry = cache.get(key);
   if (!entry) return null;
-  if (Date.now() - entry.timestamp > ttl) {
+  const effectiveTtl = entry.ttl ?? ttl;
+  if (Date.now() - entry.timestamp > effectiveTtl) {
     cache.delete(key);
     return null;
   }
   return entry.data as T;
 }
 
-export function setInCache(key: string, data: unknown): void {
-  cache.set(key, { data, timestamp: Date.now() });
+export function setInCache(key: string, data: unknown, ttl = DEFAULT_TTL): void {
+  cache.set(key, { data, timestamp: Date.now(), ttl });
 }
 
 export function clearCache(): void {
   cache.clear();
+}
+
+export function invalidateCache(pattern?: string): void {
+  if (!pattern) {
+    clearCache();
+    return;
+  }
+  for (const key of cache.keys()) {
+    if (key.includes(pattern)) {
+      cache.delete(key);
+    }
+  }
+}
+
+export function getCacheSize(): number {
+  return cache.size;
 }

@@ -61,5 +61,8 @@ export const endpoints = {
   ai: {
     generatePlan: `${WP}${NS}/ai/generate-plan`,
     suggestSwap: `${WP}${NS}/ai/suggest-swap`,
+    generateRecipes: `${WP}${NS}/ai/generate-recipes`,
+    generationStatus: (jobId: number) => `${WP}${NS}/ai/generation-status/${jobId}`,
+    regenerateRecipes: `${WP}${NS}/ai/regenerate-recipes`,
   },
 } as const;
